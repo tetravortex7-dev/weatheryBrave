@@ -1,0 +1,88 @@
+:root,
+:root[data-theme='brave-dark'] {
+  --bg-primary: #121318;
+  --bg-surface: #1b1d24;
+  --bg-elevated: #242731;
+  --text-primary: #f3f4f6;
+  --text-secondary: #cbd5e1;
+  --text-muted: #8b95a5;
+  --accent-primary: #ff5500;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.42);
+}
+
+:root[data-theme='midnight-oled'] {
+  --bg-primary: #000000;
+  --bg-surface: #0a0a0c;
+  --bg-elevated: #141418;
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --accent-primary: #38bdf8;
+  --border-subtle: rgba(255, 255, 255, 0.09);
+  --shadow-soft: 0 16px 36px rgba(0, 0, 0, 0.85);
+}
+
+:root[data-theme='nordic-frost'] {
+  --bg-primary: #2e3440;
+  --bg-surface: #3b4252;
+  --bg-elevated: #434c5e;
+  --text-primary: #eceff4;
+  --text-secondary: #d8dee9;
+  --text-muted: #9aa5b8;
+  --accent-primary: #88c0d0;
+  --border-subtle: rgba(236, 239, 244, 0.1);
+  --shadow-soft: 0 18px 40px rgba(20, 24, 31, 0.4);
+}
+
+:root[data-theme='solar-warm'] {
+  --bg-primary: #f6f1e7;
+  --bg-surface: #ede5d5;
+  --bg-elevated: #e3d9c6;
+  --text-primary: #292524;
+  --text-secondary: #44403c;
+  --text-muted: #78716c;
+  --accent-primary: #d97706;
+  --border-subtle: rgba(41, 37, 36, 0.1);
+  --shadow-soft: 0 14px 32px rgba(41, 37, 36, 0.08);
+}
+
+:root[data-theme='clean-light'] {
+  --bg-primary: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --accent-primary: #2563eb;
+  --border-subtle: rgba(15, 23, 42, 0.09);
+  --shadow-soft: 0 16px 36px rgba(15, 23, 42, 0.07);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme='auto-system'] {
+    --bg-primary: #121318;
+    --bg-surface: #1b1d24;
+    --bg-elevated: #242731;
+    --text-primary: #f3f4f6;
+    --text-secondary: #cbd5e1;
+    --text-muted: #8b95a5;
+    --accent-primary: #ff5500;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.42);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root[data-theme='auto-system'] {
+    --bg-primary: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-elevated: #f1f5f9;
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --accent-primary: #2563eb;
+    --border-subtle: rgba(15, 23, 42, 0.09);
+    --shadow-soft: 0 16px 36px rgba(15, 23, 42, 0.07);
+  }
+}

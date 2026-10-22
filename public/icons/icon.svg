@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E202B"/>
+      <stop offset="100%" stop-color="#111217"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="28" y1="22" x2="78" y2="72" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFB800"/>
+      <stop offset="100%" stop-color="#FF5500"/>
+    </linearGradient>
+    <linearGradient id="cloud" x1="40" y1="50" x2="96" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#CFD8E8"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <rect x="2" y="2" width="124" height="124" rx="26" stroke="#FFFFFF" stroke-opacity="0.08" stroke-width="2"/>
+  <circle cx="52" cy="48" r="22" fill="url(#sun)"/>
+  <path d="M88 94H42C30.954 94 22 85.046 22 74C22 63.84 29.576 55.448 39.385 54.167C43.541 43.52 53.888 36 66 36C81.464 36 94 48.536 94 64C94 64.688 93.975 65.37 93.926 66.046C101.404 68.458 106.8 75.469 106.8 83.75C106.8 93.829 98.079 94 88 94Z" fill="url(#cloud)"/>
+</svg>
