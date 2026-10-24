@@ -10,283 +10,244 @@ export interface BraveWallpaper {
 
 export const BRAVE_WALLPAPERS: readonly BraveWallpaper[] = [
   {
-    id: 'ntp-2026-Q4-1',
-    filename: './wallpapers/pascal-debrunner.jpg',
-    author: 'Pascal Debrunner',
-    creditUrl:
-      'https://unsplash.com/photos/rugged-mountain-peaks-and-grassy-ridges-at-dawn-Z2720kCJg6I',
+    id: 'ntp-brave-01',
+    filename: './wallpapers/alex-oviedo.jpg',
+    author: 'Alex Oviedo',
+    creditUrl: 'https://unsplash.com/@alexoviedo',
   },
   {
-    id: 'ntp-2026-Q4-2',
-    filename: './wallpapers/rafael-peier2.jpg',
-    author: 'Rafael Peier',
-    creditUrl:
-      'https://unsplash.com/photos/sand-dunes-with-long-shadows-dESI6T4gaN4',
-  },
-  {
-    id: 'ntp-2026-Q4-3',
-    filename: './wallpapers/david-becker.jpg',
-    author: 'David Becker',
-    creditUrl:
-      'https://unsplash.com/photos/vibrant-sunset-illuminates-ocean-waves-crashing-on-a-rocky-shore--ZQfwGY-RAo',
-  },
-  {
-    id: 'ntp-2026-Q4-4',
-    filename: './wallpapers/hunter-newton.jpg',
-    author: 'Hunter Newton',
-    creditUrl:
-      'https://unsplash.com/photos/waterfall-and-rocky-stream-flow-through-a-lush-dark-forest-TWrKDYt-vVM',
-  },
-  {
-    id: 'ntp-2026-Q4-5',
+    id: 'ntp-brave-02',
     filename: './wallpapers/andrew-svk.jpg',
     author: 'Andrew Svk',
-    creditUrl:
-      'https://unsplash.com/photos/a-mountain-range-with-a-pink-sky-in-the-background-150fZ07GQqs',
+    creditUrl: 'https://unsplash.com/@andrew_svk',
   },
   {
-    id: 'ntp-2026-Q4-6',
+    id: 'ntp-brave-03',
+    filename: './wallpapers/anton-volnuhin.jpg',
+    author: 'Anton Volnuhin',
+    creditUrl: 'https://unsplash.com/@volnuhin',
+  },
+  {
+    id: 'ntp-brave-04',
+    filename: './wallpapers/benjamin-hibbert.jpg',
+    author: 'Benjamin Hibbert',
+    creditUrl: 'https://unsplash.com/@benjaminhibbert',
+  },
+  {
+    id: 'ntp-brave-05',
+    filename: './wallpapers/damian-kamp.jpg',
+    author: 'Damian Kamp',
+    creditUrl: 'https://unsplash.com/@damiankamp',
+  },
+  {
+    id: 'ntp-brave-06',
+    filename: './wallpapers/daniel-olah.jpg',
+    author: 'Daniel Olah',
+    creditUrl: 'https://unsplash.com/@daneshmand',
+  },
+  {
+    id: 'ntp-brave-07',
     filename: './wallpapers/daniel-schwarz.jpg',
     author: 'Daniel Schwarz',
-    creditUrl:
-      'https://unsplash.com/photos/lake-surrounded-by-forested-mountains-under-a-blue-sky-ZeGQ22v9Zhk',
+    creditUrl: 'https://unsplash.com/@danielschwarz',
   },
   {
-    id: 'ntp-2026-Q4-7',
+    id: 'ntp-brave-08',
+    filename: './wallpapers/daniil-komov.jpg',
+    author: 'Daniil Komov',
+    creditUrl: 'https://unsplash.com/@daniilkomov',
+  },
+  {
+    id: 'ntp-brave-09',
+    filename: './wallpapers/daniil-silantev.jpg',
+    author: 'Daniil Silantev',
+    creditUrl: 'https://unsplash.com/@silverfox',
+  },
+  {
+    id: 'ntp-brave-10',
+    filename: './wallpapers/david-becker.jpg',
+    author: 'David Becker',
+    creditUrl: 'https://unsplash.com/@davidbecker',
+  },
+  {
+    id: 'ntp-brave-11',
+    filename: './wallpapers/david-clode.jpg',
+    author: 'David Clode',
+    creditUrl: 'https://unsplash.com/@davidclode',
+  },
+  {
+    id: 'ntp-brave-12',
+    filename: './wallpapers/elizabeth-gottwald.jpg',
+    author: 'Elizabeth Gottwald',
+    creditUrl: 'https://unsplash.com/@elizabethgottwald',
+  },
+  {
+    id: 'ntp-brave-13',
+    filename: './wallpapers/fabio-sasso.jpg',
+    author: 'Fabio Sasso',
+    creditUrl: 'https://unsplash.com/@abduzeedo',
+  },
+  {
+    id: 'ntp-brave-14',
+    filename: './wallpapers/fer-troulik.jpg',
+    author: 'Fer Troulik',
+    creditUrl: 'https://unsplash.com/@fertroulik',
+  },
+  {
+    id: 'ntp-brave-15',
+    filename: './wallpapers/freestocks.jpg',
+    author: 'freestocks',
+    creditUrl: 'https://unsplash.com/@freestocks',
+  },
+  {
+    id: 'ntp-brave-16',
+    filename: './wallpapers/fudo-jahic.jpg',
+    author: 'Fudo Jahic',
+    creditUrl: 'https://unsplash.com/@fudojahic',
+  },
+  {
+    id: 'ntp-brave-17',
     filename: './wallpapers/gabriele-merlino.jpg',
     author: 'Gabriele Merlino',
-    creditUrl:
-      'https://unsplash.com/photos/rowboats-on-clear-turquoise-water-fa5so58oDAI',
+    creditUrl: 'https://unsplash.com/@gabrielemerlino',
   },
   {
-    id: 'ntp-2026-Q4-8',
-    filename: './wallpapers/freestocks.jpg',
-    author: 'Freestocks',
-    creditUrl:
-      'https://unsplash.com/photos/green-field-plains-under-cloudy-sky-Gqc1jl2kd1U',
+    id: 'ntp-brave-18',
+    filename: './wallpapers/hunter-newton.jpg',
+    author: 'Hunter Newton',
+    creditUrl: 'https://unsplash.com/@hunter_newton',
   },
   {
-    id: 'ntp-2026-Q4-9',
+    id: 'ntp-brave-19',
+    filename: './wallpapers/john-murphey.jpg',
+    author: 'John Murphey',
+    creditUrl: 'https://unsplash.com/@johnmurphey',
+  },
+  {
+    id: 'ntp-brave-20',
+    filename: './wallpapers/juho-luomala.jpg',
+    author: 'Juho Luomala',
+    creditUrl: 'https://unsplash.com/@juholuomala',
+  },
+  {
+    id: 'ntp-brave-21',
     filename: './wallpapers/ken-cheung.jpg',
     author: 'Ken Cheung',
-    creditUrl:
-      'https://unsplash.com/photos/a-view-of-a-mountain-range-at-sunset-75xPHEQBmvA',
+    creditUrl: 'https://unsplash.com/@kencheungphoto',
   },
   {
-    id: 'ntp-2026-Q4-10',
-    filename: './wallpapers/cliford-mervil.jpg',
-    author: 'Cliford Mervil',
-    creditUrl:
-      'https://unsplash.com/photos/scenic-view-of-snow-covered-mountains-under-cloudy-sky-XcfDcf5eT3k',
+    id: 'ntp-brave-22',
+    filename: './wallpapers/kristaps-ungurs.jpg',
+    author: 'Kristaps Ungurs',
+    creditUrl: 'https://unsplash.com/@kristapsungurs',
   },
   {
-    id: 'ntp-2026-Q4-11',
-    filename: './wallpapers/alex-azabache.jpg',
-    author: 'Alex Azabache',
-    creditUrl:
-      'https://unsplash.com/photos/silhouette-of-palm-tree-near-body-of-water-during-sunset-V53o45uvZTA',
+    id: 'ntp-brave-23',
+    filename: './wallpapers/lukasz-rawa.jpg',
+    author: 'Lukasz Rawa',
+    creditUrl: 'https://unsplash.com/@lukaszrawa',
   },
   {
-    id: 'ntp-2026-Q4-12',
-    filename: './wallpapers/eberhard-grossgasteiger.jpg',
-    author: 'Eberhard Grossgasteiger',
-    creditUrl:
-      'https://unsplash.com/photos/landscape-photography-of-high-rise-mountains-pBgnT4kh8d4',
+    id: 'ntp-brave-24',
+    filename: './wallpapers/massimiliano-morosinotto.jpg',
+    author: 'Massimiliano Morosinotto',
+    creditUrl: 'https://unsplash.com/@massimilianomorosinotto',
   },
   {
-    id: 'ntp-2026-Q4-13',
-    filename: './wallpapers/luca-bravo.jpg',
-    author: 'Luca Bravo',
-    creditUrl:
-      'https://unsplash.com/photos/aerial-photography-of-mountain-range-ESkw2ayO2As',
+    id: 'ntp-brave-25',
+    filename: './wallpapers/matteo-menardi.jpg',
+    author: 'Matteo Menardi',
+    creditUrl: 'https://unsplash.com/@matteomenardi',
   },
   {
-    id: 'ntp-2026-Q4-14',
-    filename: './wallpapers/marek-piwnicki.jpg',
-    author: 'Marek Piwnicki',
-    creditUrl:
-      'https://unsplash.com/photos/brown-rock-formation-under-blue-sky-during-daytime-r3i7H_2zKSo',
+    id: 'ntp-brave-26',
+    filename: './wallpapers/mike-hindle.jpg',
+    author: 'Mike Hindle',
+    creditUrl: 'https://unsplash.com/@mikehindle',
   },
   {
-    id: 'ntp-2026-Q4-15',
-    filename: './wallpapers/bailey-zindel.jpg',
-    author: 'Bailey Zindel',
-    creditUrl:
-      'https://unsplash.com/photos/body-of-water-surrounded-by-trees-NRQV-hBF10M',
+    id: 'ntp-brave-27',
+    filename: './wallpapers/milad-fakurian.jpg',
+    author: 'Milad Fakurian',
+    creditUrl: 'https://unsplash.com/@fakurian',
   },
   {
-    id: 'ntp-2026-Q4-16',
-    filename: './wallpapers/kalen-emsley.jpg',
-    author: 'Kalen Emsley',
-    creditUrl:
-      'https://unsplash.com/photos/green-pine-trees-near-mountain-under-white-clouds-Bkci_8qcdvQ',
+    id: 'ntp-brave-28',
+    filename: './wallpapers/mogli-maureal.jpg',
+    author: 'Mogli Maureal',
+    creditUrl: 'https://unsplash.com/@moglimaureal',
   },
   {
-    id: 'ntp-2026-Q4-17',
-    filename: './wallpapers/fabio-comparelli.jpg',
-    author: 'Fabio Comparelli',
-    creditUrl:
-      'https://unsplash.com/photos/snow-covered-mountain-under-blue-sky-during-daytime-uq2E2V4LNc4',
-  },
-  {
-    id: 'ntp-2026-Q4-18',
-    filename: './wallpapers/vincentiu-solomon.jpg',
-    author: 'Vincentiu Solomon',
-    creditUrl:
-      'https://unsplash.com/photos/silhouette-of-mountain-under-milky-way-ln5drpv_ImI',
-  },
-  {
-    id: 'ntp-2026-Q4-19',
-    filename: './wallpapers/tim-mossholder.jpg',
-    author: 'Tim Mossholder',
-    creditUrl:
-      'https://unsplash.com/photos/green-trees-near-mountain-under-white-clouds-during-daytime-HhyB3Pq-t_4',
-  },
-  {
-    id: 'ntp-2026-Q4-20',
-    filename: './wallpapers/damon-on-road.jpg',
-    author: 'Damon On Road',
-    creditUrl:
-      'https://unsplash.com/photos/gray-rock-formation-under-cloudy-sky-during-daytime-q7rV8m2v5fE',
-  },
-  {
-    id: 'ntp-2026-Q4-21',
-    filename: './wallpapers/simon-berger.jpg',
-    author: 'Simon Berger',
-    creditUrl:
-      'https://unsplash.com/photos/landscape-photography-of-mountains-and-lake-twukN12EN7c',
-  },
-  {
-    id: 'ntp-2026-Q4-22',
-    filename: './wallpapers/samuel-ferrara.jpg',
-    author: 'Samuel Ferrara',
-    creditUrl:
-      'https://unsplash.com/photos/body-of-water-surrounded-by-green-grass-covered-mountains-under-white-clouds-during-daytime-1527pjeb6jg',
-  },
-  {
-    id: 'ntp-2026-Q4-23',
-    filename: './wallpapers/benjamin-voros.jpg',
-    author: 'Benjamin Voros',
-    creditUrl:
-      'https://unsplash.com/photos/snow-covered-mountain-phIFdC6lA4E',
-  },
-  {
-    id: 'ntp-2026-Q4-24',
-    filename: './wallpapers/matthew-smith.jpg',
-    author: 'Matthew Smith',
-    creditUrl:
-      'https://unsplash.com/photos/body-of-water-between-green-mountains-under-blue-sky-during-daytime-R3LcfTvcGWY',
-  },
-  {
-    id: 'ntp-2026-Q4-25',
-    filename: './wallpapers/roberto-nickson.jpg',
-    author: 'Roberto Nickson',
-    creditUrl:
-      'https://unsplash.com/photos/snow-covered-mountain-under-starry-night-emitzhhjt_4',
-  },
-  {
-    id: 'ntp-2026-Q4-26',
-    filename: './wallpapers/alessio-soggetti.jpg',
-    author: 'Alessio Soggetti',
-    creditUrl:
-      'https://unsplash.com/photos/mountains-covered-with-snow-under-blue-sky-at-daytime-8-5k_o-Z_hI',
-  },
-  {
-    id: 'ntp-2026-Q4-27',
-    filename: './wallpapers/luca-micheli.jpg',
-    author: 'Luca Micheli',
-    creditUrl:
-      'https://unsplash.com/photos/landscape-photography-of-trees-and-mountains-ruWwipn22z8',
-  },
-  {
-    id: 'ntp-2026-Q4-28',
-    filename: './wallpapers/pietro-de-grandi.jpg',
-    author: 'Pietro De Grandi',
-    creditUrl:
-      'https://unsplash.com/photos/body-of-water-near-mountains-T7K4aEPoGGk',
-  },
-  {
-    id: 'ntp-2026-Q4-29',
-    filename: './wallpapers/john-towner.jpg',
-    author: 'John Towner',
-    creditUrl:
-      'https://unsplash.com/photos/snowy-mountain-3wylDrjxH-E',
-  },
-  {
-    id: 'ntp-2026-Q4-30',
-    filename: './wallpapers/dan-meyers.jpg',
-    author: 'Dan Meyers',
-    creditUrl:
-      'https://unsplash.com/photos/brown-rock-formation-surrounded-by-body-of-water-under-blue-sky-during-daytime-08hguhv4aP0',
-  },
-  {
-    id: 'ntp-2026-Q4-31',
-    filename: './wallpapers/jerry-zhang.jpg',
-    author: 'Jerry Zhang',
-    creditUrl:
-      'https://unsplash.com/photos/mountain-covered-with-snow-under-blue-sky-during-daytime-ePpaQC2c10Q',
-  },
-  {
-    id: 'ntp-2026-Q4-32',
-    filename: './wallpapers/karl-anderson.jpg',
-    author: 'Karl Anderson',
-    creditUrl:
-      'https://unsplash.com/photos/bird-eye-view-photography-of-trees-under-clouds-3P3NHlzGCp8',
-  },
-  {
-    id: 'ntp-2026-Q4-33',
-    filename: './wallpapers/alberto-restifo.jpg',
-    author: 'Alberto Restifo',
-    creditUrl:
-      'https://unsplash.com/photos/rocky-mountain-under-white-clouds-during-daytime-cA2e0AQrycw',
-  },
-  {
-    id: 'ntp-2026-Q4-34',
-    filename: './wallpapers/casey-horner.jpg',
-    author: 'Casey Horner',
-    creditUrl:
-      'https://unsplash.com/photos/green-trees-near-snow-covered-mountain-during-night-time-RmoWqDCqN2E',
-  },
-  {
-    id: 'ntp-2026-Q4-35',
-    filename: './wallpapers/dave-hoefler.jpg',
-    author: 'Dave Hoefler',
-    creditUrl:
-      'https://unsplash.com/photos/foggy-mountain-summit-surrounded-by-clouds-okV5doZ4LzM',
-  },
-  {
-    id: 'ntp-2026-Q4-36',
-    filename: './wallpapers/joshua-sortino.jpg',
-    author: 'Joshua Sortino',
-    creditUrl:
-      'https://unsplash.com/photos/silhouette-of-mountains-during-sunset-LvxCdbDb_vg',
-  },
-  {
-    id: 'ntp-2026-Q4-37',
-    filename: './wallpapers/kristopher-roller.jpg',
-    author: 'Kristopher Roller',
-    creditUrl:
-      'https://unsplash.com/photos/milky-way-over-the-mountain-zepnJQycr4U',
-  },
-  {
-    id: 'ntp-2026-Q4-38',
+    id: 'ntp-brave-29',
     filename: './wallpapers/neom.jpg',
     author: 'NEOM',
-    creditUrl:
-      'https://unsplash.com/photos/a-large-rock-formation-in-the-middle-of-a-desert-mI6s4tF04bU',
+    creditUrl: 'https://unsplash.com/@neom',
   },
   {
-    id: 'ntp-2026-Q4-39',
-    filename: './wallpapers/hendrik-cornelissen.jpg',
-    author: 'Hendrik Cornelissen',
-    creditUrl:
-      'https://unsplash.com/photos/aerial-photography-of-mountain-with-snow-covered-during-daytime-jpTfZio6My4',
+    id: 'ntp-brave-30',
+    filename: './wallpapers/ngoc-nguyen-phuong.jpg',
+    author: 'Ngoc Nguyen Phuong',
+    creditUrl: 'https://unsplash.com/@ngocnguyenphuong',
   },
   {
-    id: 'ntp-2026-Q4-40',
+    id: 'ntp-brave-31',
+    filename: './wallpapers/nicholas-stankus.jpg',
+    author: 'Nicholas Stankus',
+    creditUrl: 'https://unsplash.com/@nicholasstankus',
+  },
+  {
+    id: 'ntp-brave-32',
+    filename: './wallpapers/oliver-plattner.jpg',
+    author: 'Oliver Plattner',
+    creditUrl: 'https://unsplash.com/@oliverplattner',
+  },
+  {
+    id: 'ntp-brave-33',
+    filename: './wallpapers/pascal-debrunner.jpg',
+    author: 'Pascal Debrunner',
+    creditUrl: 'https://unsplash.com/@pascaldebrunner',
+  },
+  {
+    id: 'ntp-brave-34',
+    filename: './wallpapers/pascal-debrunner2.jpg',
+    author: 'Pascal Debrunner',
+    creditUrl: 'https://unsplash.com/@pascaldebrunner',
+  },
+  {
+    id: 'ntp-brave-35',
     filename: './wallpapers/pedro-gomes.jpg',
     author: 'Pedro Gomes',
     creditUrl: 'https://unsplash.com/@mgomespedro',
+  },
+  {
+    id: 'ntp-brave-36',
+    filename: './wallpapers/rafael-peier.jpg',
+    author: 'Rafael Peier',
+    creditUrl: 'https://unsplash.com/@rafaelpeier',
+  },
+  {
+    id: 'ntp-brave-37',
+    filename: './wallpapers/rafael-peier2.jpg',
+    author: 'Rafael Peier',
+    creditUrl: 'https://unsplash.com/@rafaelpeier',
+  },
+  {
+    id: 'ntp-brave-38',
+    filename: './wallpapers/tom-moser.jpg',
+    author: 'Tom Moser',
+    creditUrl: 'https://unsplash.com/@tommoser',
+  },
+  {
+    id: 'ntp-brave-39',
+    filename: './wallpapers/veli-batuhan.jpg',
+    author: 'Veli Batuhan',
+    creditUrl: 'https://unsplash.com/@velibatuhan',
+  },
+  {
+    id: 'ntp-brave-40',
+    filename: './wallpapers/xiao-lou.jpg',
+    author: 'Xiao Lou',
+    creditUrl: 'https://unsplash.com/@xiaolou',
   },
 ] as const;
 

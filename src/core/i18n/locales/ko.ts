@@ -82,4 +82,7 @@ export const ko: TranslationDictionary = {
   quickNotesToggle: '빠른 메모',
   greetingName: '인사말 이름',
   greetingNamePlaceholder: '선택 사항 이름 입력',
+  tempBadge: '아이콘에 기온 표시',
+  adaptiveAccent: '배경화면 맞춤 액센트 컬러',
+  searchBarToggle: '검색창',
 };

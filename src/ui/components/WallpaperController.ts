@@ -4,6 +4,7 @@ import {
   pickNextWallpaperFromPool,
   type BraveWallpaper,
 } from '../../core/models/Wallpaper';
+import { extractDominantColor } from '../../core/services/ColorExtractor';
 import { clearChildren, createEl } from '../dom/domHelpers';
 import { createUiIconSvg } from '../dom/svgIcons';
 
@@ -185,10 +186,12 @@ export class WallpaperController {
     this.creditBarEl.hidden = !hasValidWallpaper;
 
     if (!hasValidWallpaper) {
+      document.documentElement.style.removeProperty('--accent-primary');
+      document.documentElement.style.removeProperty('--accent-glow');
       return;
     }
 
-    const safeIndex = this.currentIndex % pool.length;
+    const safeIndex = Math.abs(this.currentIndex) % pool.length;
     const wp = pool[safeIndex] ?? pool[0];
     if (!wp) {
       return;
@@ -200,6 +203,15 @@ export class WallpaperController {
     this.bgLayerEl.style.setProperty('--wp-blur', blurPx);
 
     this.bgLayerEl.style.backgroundImage = `url("${wp.filename}")`;
+
+    const imgFallbackCheck = new Image();
+    imgFallbackCheck.src = wp.filename;
+    imgFallbackCheck.onerror = () => {
+      const fallbackWp = pool[0];
+      if (fallbackWp && fallbackWp.filename !== wp.filename) {
+        this.bgLayerEl.style.backgroundImage = `url("${fallbackWp.filename}")`;
+      }
+    };
     if (wp.isCustom) {
       this.creditPrefixEl.textContent = 'Custom · ';
       this.creditLinkEl.textContent = wp.author;
@@ -208,6 +220,24 @@ export class WallpaperController {
       this.creditPrefixEl.textContent = 'Photo by ';
       this.creditLinkEl.textContent = wp.author;
       this.creditLinkEl.href = wp.creditUrl;
+    }
+
+    if (this.settings.adaptiveAccent) {
+      void extractDominantColor(wp.filename).then((color) => {
+        if (color && this.settings.adaptiveAccent) {
+          document.documentElement.style.setProperty('--accent-primary', color);
+          document.documentElement.style.setProperty(
+            '--accent-glow',
+            color.replace('rgb(', 'rgba(').replace(')', ', 0.35)')
+          );
+        } else {
+          document.documentElement.style.removeProperty('--accent-primary');
+          document.documentElement.style.removeProperty('--accent-glow');
+        }
+      });
+    } else {
+      document.documentElement.style.removeProperty('--accent-primary');
+      document.documentElement.style.removeProperty('--accent-glow');
     }
   }
 }

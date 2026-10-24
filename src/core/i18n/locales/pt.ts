@@ -82,4 +82,7 @@ export const pt: TranslationDictionary = {
   quickNotesToggle: 'Notas rápidas',
   greetingName: 'Nome na saudação',
   greetingNamePlaceholder: 'Nome opcional',
+  tempBadge: 'Temperatura no ícone',
+  adaptiveAccent: 'Cor adaptativa do papel de parede',
+  searchBarToggle: 'Barra de pesquisa',
 };

@@ -82,4 +82,7 @@ export const ru: TranslationDictionary = {
   quickNotesToggle: 'Блокнот заметок',
   greetingName: 'Имя в приветствии',
   greetingNamePlaceholder: 'Ваше имя (необязательно)',
+  tempBadge: 'Температура на значке браузера',
+  adaptiveAccent: 'Адаптивный цвет под обои',
+  searchBarToggle: 'Окно поиска',
 };

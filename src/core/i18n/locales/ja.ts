@@ -82,4 +82,7 @@ export const ja: TranslationDictionary = {
   quickNotesToggle: 'クイックメモ',
   greetingName: '挨拶の宛名',
   greetingNamePlaceholder: '名前を入力（任意）',
+  tempBadge: 'アイコンに気温を表示',
+  adaptiveAccent: '壁紙に合わせたアクセントカラー',
+  searchBarToggle: '検索バー',
 };

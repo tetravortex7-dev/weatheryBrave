@@ -1,3 +1,4 @@
+import { type UserSettings } from '../../core/models/Settings';
 import {
   type ISearchProvider,
   type SearchDisposition,
@@ -10,8 +11,13 @@ export class SearchWidget {
   private readonly inputEl: HTMLInputElement;
   private readonly shortcutHintEl: HTMLElement;
   private readonly submitBtnEl: HTMLButtonElement;
+  private settings: UserSettings;
 
-  constructor(private readonly searchProvider: ISearchProvider) {
+  constructor(
+    private readonly searchProvider: ISearchProvider,
+    initialSettings: UserSettings
+  ) {
+    this.settings = initialSettings;
     const leadingIcon = createEl('span', { className: 'search-bar__icon' }, [
       createUiIconSvg('search', 18),
     ]);
@@ -57,11 +63,28 @@ export class SearchWidget {
       [leadingIcon, this.inputEl, this.shortcutHintEl, this.submitBtnEl]
     );
 
+    this.formEl.hidden = !this.settings.showSearch;
     this.bindEvents();
   }
 
   public getElement(): HTMLElement {
     return this.formEl;
+  }
+
+  public updateSettings(settings: UserSettings): void {
+    this.settings = settings;
+    this.formEl.hidden = !this.settings.showSearch;
+  }
+
+  public focus(): void {
+    if (this.formEl.hidden) {
+      return;
+    }
+    try {
+      this.inputEl.focus();
+      this.inputEl.select();
+    } catch {
+    }
   }
 
   private bindEvents(): void {
@@ -95,6 +118,9 @@ export class SearchWidget {
     });
 
     document.addEventListener('keydown', (e) => {
+      if (this.formEl.hidden) {
+        return;
+      }
       if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) {
         return;
       }
@@ -106,13 +132,15 @@ export class SearchWidget {
 
       if (!isInputFocused) {
         e.preventDefault();
-        this.inputEl.focus();
-        this.inputEl.select();
+        this.focus();
       }
     });
   }
 
   private executeSearch(disposition: SearchDisposition): void {
+    if (this.formEl.hidden) {
+      return;
+    }
     const query = this.inputEl.value.trim();
     if (!query) {
       return;

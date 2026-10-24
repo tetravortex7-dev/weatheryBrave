@@ -206,6 +206,16 @@ export class SettingsDrawer {
       (val) => this.emitUpdate({ lockWallpaper: val === 'locked' })
     );
 
+    const adaptiveRow = this.createSegmentedRow<'on' | 'off'>(
+      i18n.adaptiveAccent,
+      [
+        { value: 'on', label: i18n.secVisible },
+        { value: 'off', label: i18n.secHidden },
+      ],
+      this.settings.adaptiveAccent ? 'on' : 'off',
+      (val) => this.emitUpdate({ adaptiveAccent: val === 'on' })
+    );
+
     const dimSlider = createEl('input', {
       className: 'drawer__slider',
       attrs: {
@@ -350,6 +360,7 @@ export class SettingsDrawer {
       toggleRow,
       sourceRow,
       lockRow,
+      adaptiveRow,
       dimRow,
       blurRow,
       customHeaderRow,
@@ -422,12 +433,23 @@ export class SettingsDrawer {
       (windSpeedUnit) => this.emitUpdate({ windSpeedUnit })
     );
 
+    const badgeRow = this.createSegmentedRow<'on' | 'off'>(
+      i18n.tempBadge,
+      [
+        { value: 'on', label: i18n.secVisible },
+        { value: 'off', label: i18n.secHidden },
+      ],
+      this.settings.showTempBadge ? 'on' : 'off',
+      (val) => this.emitUpdate({ showTempBadge: val === 'on' })
+    );
+
     return createEl('div', { className: 'drawer__section' }, [
       createEl('h3', { className: 'drawer__subtitle', textContent: i18n.weatherSubtitle }),
       langRow,
       viewModeRow,
       tempRow,
       windRow,
+      badgeRow,
     ]);
   }
 
@@ -465,6 +487,16 @@ export class SettingsDrawer {
       ],
       this.settings.secondaryTimezone,
       (secondaryTimezone) => this.emitUpdate({ secondaryTimezone })
+    );
+
+    const searchBarRow = this.createSegmentedRow<'on' | 'off'>(
+      i18n.searchBarToggle,
+      [
+        { value: 'on', label: i18n.secVisible },
+        { value: 'off', label: i18n.secHidden },
+      ],
+      this.settings.showSearch ? 'on' : 'off',
+      (val) => this.emitUpdate({ showSearch: val === 'on' })
     );
 
     const quickPinsRow = this.createSegmentedRow<'on' | 'off'>(
@@ -523,6 +555,7 @@ export class SettingsDrawer {
       formatRow,
       secondsRow,
       tzRow,
+      searchBarRow,
       quickPinsRow,
       targetRow,
       notesRow,

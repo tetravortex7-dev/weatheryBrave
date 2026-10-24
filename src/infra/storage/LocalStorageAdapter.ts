@@ -58,6 +58,21 @@ export function isLinkTargetMode(val: unknown): val is LinkTargetMode {
   return val === 'current' || val === 'new-tab';
 }
 
+const LEGACY_DEFAULT_LINK_IDS: readonly string[] = [
+  'pin-github',
+  'pin-youtube',
+  'pin-reddit',
+  'pin-hn',
+];
+
+const PREVIOUS_WITH_GOOGLE_IDS: readonly string[] = [
+  'pin-google',
+  'pin-youtube',
+  'pin-facebook',
+  'pin-instagram',
+  'pin-chatgpt',
+];
+
 export function parseQuickLinks(raw: unknown): readonly QuickLink[] {
   if (!Array.isArray(raw)) {
     return DEFAULT_QUICK_LINKS;
@@ -81,6 +96,17 @@ export function parseQuickLinks(raw: unknown): readonly QuickLink[] {
     if (valid.length >= MAX_QUICK_LINKS) {
       break;
     }
+  }
+  const isLegacyOld =
+    valid.length === LEGACY_DEFAULT_LINK_IDS.length &&
+    valid.every((link, idx) => link.id === LEGACY_DEFAULT_LINK_IDS[idx]);
+
+  const isPreviousWithGoogle =
+    valid.length === PREVIOUS_WITH_GOOGLE_IDS.length &&
+    valid.every((link, idx) => link.id === PREVIOUS_WITH_GOOGLE_IDS[idx]);
+
+  if (isLegacyOld || isPreviousWithGoogle) {
+    return DEFAULT_QUICK_LINKS;
   }
   return valid;
 }
@@ -188,6 +214,18 @@ export class LocalStorageAdapter implements ISettingsStore, IWeatherCacheStore {
         linkTarget: isLinkTargetMode(parsed['linkTarget'])
           ? parsed['linkTarget']
           : DEFAULT_SETTINGS.linkTarget,
+        showTempBadge:
+          typeof parsed['showTempBadge'] === 'boolean'
+            ? parsed['showTempBadge']
+            : DEFAULT_SETTINGS.showTempBadge,
+        adaptiveAccent:
+          typeof parsed['adaptiveAccent'] === 'boolean'
+            ? parsed['adaptiveAccent']
+            : DEFAULT_SETTINGS.adaptiveAccent,
+        showSearch:
+          typeof parsed['showSearch'] === 'boolean'
+            ? parsed['showSearch']
+            : DEFAULT_SETTINGS.showSearch,
       };
     } catch {
       return DEFAULT_SETTINGS;

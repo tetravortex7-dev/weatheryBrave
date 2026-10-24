@@ -82,4 +82,7 @@ export const tr: TranslationDictionary = {
   quickNotesToggle: 'Hızlı notlar',
   greetingName: 'Selamlama adı',
   greetingNamePlaceholder: 'İsteğe bağlı isim',
+  tempBadge: 'Simge rozetinde sıcaklık',
+  adaptiveAccent: 'Uyarlanabilir duvar kağıdı rengi',
+  searchBarToggle: 'Arama çubuğu',
 };

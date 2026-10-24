@@ -116,4 +116,7 @@ export interface TranslationDictionary {
   readonly quickNotesToggle: string;
   readonly greetingName: string;
   readonly greetingNamePlaceholder: string;
+  readonly tempBadge: string;
+  readonly adaptiveAccent: string;
+  readonly searchBarToggle: string;
 }

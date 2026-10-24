@@ -7,10 +7,10 @@ export interface QuickLink {
 export const MAX_QUICK_LINKS = 16;
 
 export const DEFAULT_QUICK_LINKS: readonly QuickLink[] = [
-  { id: 'pin-github', title: 'GitHub', url: 'https://github.com' },
   { id: 'pin-youtube', title: 'YouTube', url: 'https://www.youtube.com' },
-  { id: 'pin-reddit', title: 'Reddit', url: 'https://www.reddit.com' },
-  { id: 'pin-hn', title: 'Hacker News', url: 'https://news.ycombinator.com' },
+  { id: 'pin-facebook', title: 'Facebook', url: 'https://www.facebook.com' },
+  { id: 'pin-instagram', title: 'Instagram', url: 'https://www.instagram.com' },
+  { id: 'pin-chatgpt', title: 'ChatGPT', url: 'https://chatgpt.com' },
 ] as const;
 
 export function normalizeQuickLinkUrl(raw: string): string | null {

@@ -63,6 +63,37 @@ describe('Storage Validators & Parsers', () => {
 
   it('falls back to default quick links on non-array input', () => {
     const parsed = parseQuickLinks(null);
-    expect(parsed.length).toBeGreaterThan(0);
+    expect(parsed.length).toBe(4);
+    expect(parsed.map((l) => l.title)).toEqual([
+      'YouTube',
+      'Facebook',
+      'Instagram',
+      'ChatGPT',
+    ]);
+  });
+
+  it('migrates legacy default quick links to top websites without google', () => {
+    const legacy = [
+      { id: 'pin-github', title: 'GitHub', url: 'https://github.com' },
+      { id: 'pin-youtube', title: 'YouTube', url: 'https://www.youtube.com' },
+      { id: 'pin-reddit', title: 'Reddit', url: 'https://www.reddit.com' },
+      { id: 'pin-hn', title: 'Hacker News', url: 'https://news.ycombinator.com' },
+    ];
+    const parsed = parseQuickLinks(legacy);
+    expect(parsed).toHaveLength(4);
+    expect(parsed[0]?.title).toBe('YouTube');
+    expect(parsed[3]?.title).toBe('ChatGPT');
+
+    const previousWithGoogle = [
+      { id: 'pin-google', title: 'Google', url: 'https://www.google.com' },
+      { id: 'pin-youtube', title: 'YouTube', url: 'https://www.youtube.com' },
+      { id: 'pin-facebook', title: 'Facebook', url: 'https://www.facebook.com' },
+      { id: 'pin-instagram', title: 'Instagram', url: 'https://www.instagram.com' },
+      { id: 'pin-chatgpt', title: 'ChatGPT', url: 'https://chatgpt.com' },
+    ];
+    const migrated = parseQuickLinks(previousWithGoogle);
+    expect(migrated).toHaveLength(4);
+    expect(migrated[0]?.title).toBe('YouTube');
+    expect(migrated[3]?.title).toBe('ChatGPT');
   });
 });

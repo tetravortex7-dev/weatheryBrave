@@ -82,4 +82,7 @@ export const fr: TranslationDictionary = {
   quickNotesToggle: 'Bloc-notes',
   greetingName: 'Nom de salutation',
   greetingNamePlaceholder: 'Nom optionnel',
+  tempBadge: 'Température sur l’icône',
+  adaptiveAccent: 'Couleur adaptative du fond',
+  searchBarToggle: 'Barre de recherche',
 };

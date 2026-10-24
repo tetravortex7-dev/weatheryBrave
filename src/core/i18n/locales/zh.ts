@@ -82,4 +82,7 @@ export const zh: TranslationDictionary = {
   quickNotesToggle: '快速便签小组件',
   greetingName: '问候语称谓',
   greetingNamePlaceholder: '自定义名称（可选）',
+  tempBadge: '图标角标显示气温',
+  adaptiveAccent: '自适应壁纸强调色',
+  searchBarToggle: '搜索栏',
 };

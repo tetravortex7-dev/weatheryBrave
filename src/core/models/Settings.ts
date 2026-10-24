@@ -38,6 +38,9 @@ export interface UserSettings {
   readonly showScratchpad: boolean;
   readonly scratchpadContent: string;
   readonly linkTarget: LinkTargetMode;
+  readonly showTempBadge: boolean;
+  readonly adaptiveAccent: boolean;
+  readonly showSearch: boolean;
 }
 
 export const DEFAULT_SETTINGS: UserSettings = {
@@ -62,4 +65,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   showScratchpad: true,
   scratchpadContent: '',
   linkTarget: 'current',
+  showTempBadge: true,
+  adaptiveAccent: true,
+  showSearch: true,
 };

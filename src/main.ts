@@ -1,9 +1,11 @@
 import { getI18n } from './core/i18n';
+import { type WeatherData } from './core/models/Weather';
 import { WeatherSyncService } from './core/services/WeatherSyncService';
 import { OpenMeteoGeocodingProvider } from './infra/api/OpenMeteoGeocodingProvider';
 import { OpenMeteoWeatherProvider } from './infra/api/OpenMeteoWeatherProvider';
 import { IndexedDbWallpaperStore } from './infra/storage/IndexedDbWallpaperStore';
 import { LocalStorageAdapter } from './infra/storage/LocalStorageAdapter';
+import { updateBrowserBadge } from './infra/system/BrowserBadgeService';
 import { BrowserSearchProvider } from './infra/system/BrowserSearchProvider';
 import { SystemClock } from './infra/system/SystemClock';
 import { ClockWidget } from './ui/components/ClockWidget';
@@ -50,7 +52,7 @@ function bootstrap(): void {
   });
 
   const clockWidget = new ClockWidget(clock, currentSettings);
-  const searchWidget = new SearchWidget(searchProvider);
+  const searchWidget = new SearchWidget(searchProvider, currentSettings);
 
   const quickLinksWidget = new QuickLinksWidget(currentSettings, (nextLinks) => {
     currentSettings = {
@@ -74,15 +76,29 @@ function bootstrap(): void {
     },
   });
 
+  let lastWeatherData: WeatherData | null = null;
+
   const runWeatherSync = (forceRefresh: boolean): void => {
     void weatherSync.sync(
       currentSettings.location,
       {
         onWeatherState: (data, isStale) => {
+          lastWeatherData = data;
           weatherWidget.renderWeather(data, isStale);
+          updateBrowserBadge(
+            data,
+            currentSettings.temperatureUnit,
+            currentSettings.showTempBadge
+          );
         },
         onSyncError: (errorMessage, fallbackCache) => {
+          lastWeatherData = fallbackCache;
           weatherWidget.renderError(errorMessage, fallbackCache);
+          updateBrowserBadge(
+            fallbackCache,
+            currentSettings.temperatureUnit,
+            currentSettings.showTempBadge
+          );
         },
       },
       forceRefresh
@@ -124,11 +140,18 @@ function bootstrap(): void {
 
       document.title = getI18n(currentSettings.language).newTabTitle;
 
+      updateBrowserBadge(
+        lastWeatherData,
+        currentSettings.temperatureUnit,
+        currentSettings.showTempBadge
+      );
+
       clockWidget.updateSettings(currentSettings);
       quickLinksWidget.updateSettings(currentSettings);
       wallpaperController.updateSettings(currentSettings);
       weatherWidget.updateSettings(currentSettings);
       scratchpadWidget.updateSettings(currentSettings);
+      searchWidget.updateSettings(currentSettings);
     },
     onUploadWallpapers: async (files) => {
       for (const file of Array.from(files)) {
@@ -193,6 +216,19 @@ function bootstrap(): void {
 
   void refreshCustomWallpapers(false);
   runWeatherSync(false);
+
+  if (currentSettings.showSearch) {
+    requestAnimationFrame(() => {
+      searchWidget.focus();
+    });
+    window.addEventListener(
+      'focus',
+      () => {
+        searchWidget.focus();
+      },
+      { once: true }
+    );
+  }
 }
 
 bootstrap();

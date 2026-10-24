@@ -82,4 +82,7 @@ export const hi: TranslationDictionary = {
   quickNotesToggle: 'त्वरित नोट्स',
   greetingName: 'अभिवादन नाम',
   greetingNamePlaceholder: 'वैकल्पिक नाम',
+  tempBadge: 'आइकन पर तापमान दिखाएं',
+  adaptiveAccent: 'वॉलपेपर के अनुसार रंग',
+  searchBarToggle: 'सर्च बार',
 };

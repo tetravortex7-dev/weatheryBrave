@@ -48,4 +48,16 @@ describe('Wallpaper Pool & Selection Domain Logic', () => {
     expect(result.index).toBe(0);
     expect(result.wallpaper).toBeNull();
   });
+
+  it('contains 40 valid built-in wallpapers with unique ids', () => {
+    expect(BRAVE_WALLPAPERS).toHaveLength(40);
+    const ids = new Set(BRAVE_WALLPAPERS.map((w) => w.id));
+    expect(ids.size).toBe(40);
+
+    for (const wp of BRAVE_WALLPAPERS) {
+      expect(wp.filename.startsWith('./wallpapers/')).toBe(true);
+      expect(wp.author.trim().length).toBeGreaterThan(0);
+      expect(wp.creditUrl.trim().length).toBeGreaterThan(0);
+    }
+  });
 });

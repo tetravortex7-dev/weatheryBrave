@@ -13,6 +13,9 @@
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
+  "action": {
+    "default_title": "WeatheryBrave"
+  },
   "permissions": ["search", "favicon"],
   "host_permissions": [
     "https://api.open-meteo.com/*",
