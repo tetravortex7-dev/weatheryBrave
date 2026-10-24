@@ -5,17 +5,30 @@ import {
   type WindSpeedUnit,
 } from '../../core/models/Settings';
 import { THEME_REGISTRY, type ThemeId } from '../../core/models/Theme';
-import { createEl } from '../dom/domHelpers';
+import {
+  type BraveWallpaper,
+  type WallpaperSourceMode,
+} from '../../core/models/Wallpaper';
+import { clearChildren, createEl } from '../dom/domHelpers';
 import { createUiIconSvg } from '../dom/svgIcons';
+
+export interface SettingsDrawerCallbacks {
+  onChangeSettings(updated: UserSettings): void;
+  onUploadWallpapers(files: FileList): Promise<void>;
+  onRemoveCustomWallpaper(id: string): Promise<void>;
+}
 
 export class SettingsDrawer {
   private readonly backdropEl: HTMLElement;
+  private readonly customGalleryEl: HTMLElement;
+  private readonly customCountEl: HTMLElement;
   private settings: UserSettings;
+  private customWallpapers: readonly BraveWallpaper[] = [];
   private readonly themeButtons = new Map<ThemeId, HTMLButtonElement>();
 
   constructor(
     initialSettings: UserSettings,
-    private readonly onChange: (updated: UserSettings) => void
+    private readonly callbacks: SettingsDrawerCallbacks
   ) {
     this.settings = initialSettings;
 
@@ -39,7 +52,16 @@ export class SettingsDrawer {
       closeBtn,
     ]);
 
+    this.customGalleryEl = createEl('div', {
+      className: 'custom-wp-gallery',
+    });
+    this.customCountEl = createEl('span', {
+      className: 'custom-wp-count',
+      textContent: '0 uploaded',
+    });
+
     const themeSection = this.buildThemePicker();
+    const wallpaperSection = this.buildWallpaperSection();
     const unitsSection = this.buildUnitsControls();
     const clockSection = this.buildClockControls();
 
@@ -49,7 +71,7 @@ export class SettingsDrawer {
         className: 'drawer__panel',
         attrs: { role: 'dialog', 'aria-label': 'Extension Settings' },
       },
-      [header, themeSection, unitsSection, clockSection]
+      [header, themeSection, wallpaperSection, unitsSection, clockSection]
     );
 
     this.backdropEl = createEl(
@@ -77,10 +99,15 @@ export class SettingsDrawer {
     this.backdropEl.hidden = true;
   }
 
+  public setCustomWallpapers(wallpapers: readonly BraveWallpaper[]): void {
+    this.customWallpapers = wallpapers;
+    this.renderCustomGallery();
+  }
+
   private emitUpdate(partial: Partial<UserSettings>): void {
     this.settings = { ...this.settings, ...partial };
     this.syncThemeActiveState();
-    this.onChange(this.settings);
+    this.callbacks.onChangeSettings(this.settings);
   }
 
   private buildThemePicker(): HTMLElement {
@@ -125,6 +152,123 @@ export class SettingsDrawer {
   private syncThemeActiveState(): void {
     for (const [id, btn] of this.themeButtons.entries()) {
       btn.classList.toggle('theme-card--active', id === this.settings.theme);
+    }
+  }
+
+  private buildWallpaperSection(): HTMLElement {
+    const toggleRow = this.createSegmentedRow<'on' | 'off'>(
+      'Background mode',
+      [
+        { value: 'on', label: 'Wallpapers' },
+        { value: 'off', label: 'Solid color' },
+      ],
+      this.settings.showWallpaper ? 'on' : 'off',
+      (val) => this.emitUpdate({ showWallpaper: val === 'on' })
+    );
+
+    const sourceRow = this.createSegmentedRow<WallpaperSourceMode>(
+      'Collection',
+      [
+        { value: 'both', label: 'All' },
+        { value: 'custom-only', label: 'My Only' },
+        { value: 'builtin-only', label: 'Brave' },
+      ],
+      this.settings.wallpaperSource,
+      (wallpaperSource) => this.emitUpdate({ wallpaperSource })
+    );
+
+    const fileInput = createEl('input', {
+      attrs: {
+        type: 'file',
+        accept: 'image/jpeg,image/png,image/webp,image/avif',
+        multiple: 'true',
+        hidden: 'true',
+      },
+    });
+
+    const uploadBtn = createEl(
+      'button',
+      {
+        className: 'custom-wp-upload-btn',
+        attrs: { type: 'button' },
+      },
+      [
+        createUiIconSvg('plus', 14),
+        createEl('span', { textContent: 'Upload Custom Wallpaper(s)' }),
+      ]
+    );
+
+    uploadBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files && fileInput.files.length > 0) {
+        void this.callbacks.onUploadWallpapers(fileInput.files);
+        fileInput.value = '';
+      }
+    });
+
+    const customHeaderRow = createEl('div', { className: 'drawer__row' }, [
+      createEl('span', { textContent: 'My uploaded wallpapers' }),
+      this.customCountEl,
+    ]);
+
+    this.renderCustomGallery();
+
+    return createEl('div', { className: 'drawer__section' }, [
+      createEl('h3', {
+        className: 'drawer__subtitle',
+        textContent: 'Wallpapers',
+      }),
+      toggleRow,
+      sourceRow,
+      customHeaderRow,
+      uploadBtn,
+      fileInput,
+      this.customGalleryEl,
+    ]);
+  }
+
+  private renderCustomGallery(): void {
+    clearChildren(this.customGalleryEl);
+    this.customCountEl.textContent = `${this.customWallpapers.length} saved`;
+
+    if (this.customWallpapers.length === 0) {
+      this.customGalleryEl.appendChild(
+        createEl('p', {
+          className: 'custom-wp-empty',
+          textContent:
+            'No custom wallpapers yet. Upload images to mix with Brave or use "My Only".',
+        })
+      );
+      return;
+    }
+
+    for (const wp of this.customWallpapers) {
+      const thumb = createEl('div', { className: 'custom-wp-thumb' });
+      thumb.style.backgroundImage = `url("${wp.filename}")`;
+
+      const removeBtn = createEl(
+        'button',
+        {
+          className: 'custom-wp-thumb__remove',
+          attrs: {
+            type: 'button',
+            title: `Delete ${wp.author}`,
+            'aria-label': `Delete ${wp.author}`,
+          },
+        },
+        [createUiIconSvg('close', 12)]
+      );
+      removeBtn.addEventListener('click', () => {
+        void this.callbacks.onRemoveCustomWallpaper(wp.id);
+      });
+
+      const nameTag = createEl('span', {
+        className: 'custom-wp-thumb__label',
+        textContent: wp.author,
+      });
+
+      thumb.append(removeBtn, nameTag);
+      this.customGalleryEl.appendChild(thumb);
     }
   }
 
@@ -178,6 +322,16 @@ export class SettingsDrawer {
       (val) => this.emitUpdate({ showSeconds: val === 'on' })
     );
 
+    const quickPinsRow = this.createSegmentedRow<'on' | 'off'>(
+      'Quick pins bar',
+      [
+        { value: 'on', label: 'Visible' },
+        { value: 'off', label: 'Hidden' },
+      ],
+      this.settings.showQuickLinks ? 'on' : 'off',
+      (val) => this.emitUpdate({ showQuickLinks: val === 'on' })
+    );
+
     const nameInput = createEl('input', {
       className: 'drawer__text-input',
       attrs: {
@@ -199,10 +353,11 @@ export class SettingsDrawer {
     return createEl('div', { className: 'drawer__section' }, [
       createEl('h3', {
         className: 'drawer__subtitle',
-        textContent: 'Clock & Greeting',
+        textContent: 'Clock & Layout',
       }),
       formatRow,
       secondsRow,
+      quickPinsRow,
       greetingRow,
     ]);
   }

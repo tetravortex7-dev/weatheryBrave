@@ -1,4 +1,9 @@
 import {
+  DEFAULT_QUICK_LINKS,
+  MAX_QUICK_LINKS,
+  type QuickLink,
+} from '../../core/models/QuickLink';
+import {
   DEFAULT_SETTINGS,
   type TemperatureUnit,
   type TimeFormat,
@@ -6,6 +11,7 @@ import {
   type WindSpeedUnit,
 } from '../../core/models/Settings';
 import { isValidThemeId } from '../../core/models/Theme';
+import { type WallpaperSourceMode } from '../../core/models/Wallpaper';
 import { type WeatherData } from '../../core/models/Weather';
 import {
   type ISettingsStore,
@@ -28,6 +34,37 @@ function isWindUnit(val: unknown): val is WindSpeedUnit {
 
 function isTimeFormat(val: unknown): val is TimeFormat {
   return val === '24h' || val === '12h';
+}
+
+function isWallpaperSource(val: unknown): val is WallpaperSourceMode {
+  return val === 'both' || val === 'custom-only' || val === 'builtin-only';
+}
+
+function parseQuickLinks(raw: unknown): readonly QuickLink[] {
+  if (!Array.isArray(raw)) {
+    return DEFAULT_QUICK_LINKS;
+  }
+  const valid: QuickLink[] = [];
+  for (const item of raw) {
+    if (
+      item &&
+      typeof item === 'object' &&
+      typeof (item as Record<string, unknown>)['id'] === 'string' &&
+      typeof (item as Record<string, unknown>)['title'] === 'string' &&
+      typeof (item as Record<string, unknown>)['url'] === 'string'
+    ) {
+      const rec = item as Record<string, string>;
+      valid.push({
+        id: rec['id'] ?? '',
+        title: rec['title'] ?? '',
+        url: rec['url'] ?? '',
+      });
+    }
+    if (valid.length >= MAX_QUICK_LINKS) {
+      break;
+    }
+  }
+  return valid;
 }
 
 export class LocalStorageAdapter implements ISettingsStore, IWeatherCacheStore {
@@ -86,6 +123,18 @@ export class LocalStorageAdapter implements ISettingsStore, IWeatherCacheStore {
           typeof parsed['customName'] === 'string'
             ? parsed['customName']
             : DEFAULT_SETTINGS.customName,
+        showQuickLinks:
+          typeof parsed['showQuickLinks'] === 'boolean'
+            ? parsed['showQuickLinks']
+            : DEFAULT_SETTINGS.showQuickLinks,
+        quickLinks: parseQuickLinks(parsed['quickLinks']),
+        showWallpaper:
+          typeof parsed['showWallpaper'] === 'boolean'
+            ? parsed['showWallpaper']
+            : DEFAULT_SETTINGS.showWallpaper,
+        wallpaperSource: isWallpaperSource(parsed['wallpaperSource'])
+          ? parsed['wallpaperSource']
+          : DEFAULT_SETTINGS.wallpaperSource,
       };
     } catch {
       return DEFAULT_SETTINGS;

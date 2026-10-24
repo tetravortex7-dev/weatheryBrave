@@ -36,3 +36,18 @@ export function formatWindSpeed(kmh: number, unit: WindSpeedUnit): string {
   const suffix = unit === 'ms' ? 'm/s' : unit === 'mph' ? 'mph' : 'km/h';
   return `${rounded} ${suffix}`;
 }
+
+export function describeUvIndex(uv: number): string {
+  const rounded = Math.round(uv);
+  if (rounded <= 2) {
+    return `UV ${rounded} (Low)`;
+  }
+  if (rounded <= 5) {
+    return `UV ${rounded} (Mod)`;
+  }
+  if (rounded <= 7) {
+    return `UV ${rounded} (High)`;
+  }
+  return `UV ${rounded} (Very High)`;
+}
+

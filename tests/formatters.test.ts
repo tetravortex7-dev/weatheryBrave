@@ -1,11 +1,21 @@
 import { describe, expect, it } from 'vitest';
+import {
+  extractMonogram,
+  normalizeQuickLinkUrl,
+} from '../src/core/models/QuickLink';
+import {
+  buildWallpaperPool,
+  type BraveWallpaper,
+} from '../src/core/models/Wallpaper';
 import { getGreetingText } from '../src/core/services/GreetingService';
 import {
   formatClock,
+  formatIsoClockTime,
   formatRelativeAge,
   formatShortWeekday,
 } from '../src/core/services/TimeFormatter';
 import {
+  describeUvIndex,
   formatTemperature,
   formatWindSpeed,
 } from '../src/core/services/WeatherFormatter';
@@ -90,4 +100,36 @@ describe('BrowserSearchProvider URL vs Search resolution', () => {
     expect(resolveDirectUrl('how to use typescript')).toBeNull();
   });
 });
+
+describe('QuickLink, UV & Sunrise/Sunset formatters', () => {
+  it('normalizes quick link URLs and generates 2-letter monograms', () => {
+    expect(normalizeQuickLinkUrl('github.com')).toBe('https://github.com/');
+    expect(normalizeQuickLinkUrl('javascript:alert(1)')).toBeNull();
+    expect(extractMonogram('GitHub', 'https://github.com')).toBe('GI');
+    expect(extractMonogram('', 'https://www.reddit.com')).toBe('RE');
+  });
+
+  it('formats sunrise/sunset ISO times and UV index descriptions', () => {
+    expect(formatIsoClockTime('2026-10-23T06:42', '24h')).toBe('06:42');
+    expect(formatIsoClockTime('2026-10-23T18:15', '12h')).toBe('6:15 PM');
+    expect(describeUvIndex(1.8)).toBe('UV 2 (Low)');
+    expect(describeUvIndex(6.2)).toBe('UV 6 (High)');
+  });
+
+  it('builds wallpaper pools for All, My Only, and Brave modes', () => {
+    const sampleCustom: BraveWallpaper[] = [
+      {
+        id: 'custom-1',
+        filename: 'data:image/png;base64,AAA',
+        author: 'My Photo',
+        creditUrl: '#',
+        isCustom: true,
+      },
+    ];
+    expect(buildWallpaperPool('custom-only', sampleCustom)).toHaveLength(1);
+    expect(buildWallpaperPool('builtin-only', sampleCustom)).toHaveLength(40);
+    expect(buildWallpaperPool('both', sampleCustom)).toHaveLength(41);
+  });
+});
+
 

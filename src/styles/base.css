@@ -37,6 +37,7 @@ button {
 
 .app-shell {
   position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -45,6 +46,91 @@ button {
   height: 100vh;
   width: 100vw;
   padding: 2rem;
+}
+
+/* Brave Native Rotating Wallpaper Layer */
+.wallpaper-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  transition: background-image 280ms ease;
+}
+
+.wallpaper-layer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 42%,
+    rgba(10, 12, 18, 0.28) 0%,
+    rgba(10, 12, 18, 0.62) 100%
+  );
+}
+
+/* Frosted Glass Elevation when Wallpaper is active */
+body.has-wallpaper .clock-widget__time,
+body.has-wallpaper .clock-widget__date,
+body.has-wallpaper .clock-widget__greeting {
+  color: #f8fafc;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+}
+
+body.has-wallpaper .search-bar,
+body.has-wallpaper .weather-card,
+body.has-wallpaper .quick-pin,
+body.has-wallpaper .quick-links__form,
+body.has-wallpaper .top-bar .icon-btn {
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  background-color: color-mix(in srgb, var(--bg-surface) 76%, transparent);
+}
+
+.wallpaper-credit {
+  position: fixed;
+  bottom: 1.15rem;
+  left: 1.5rem;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.32rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  color: rgba(248, 250, 252, 0.78);
+  background-color: rgba(15, 17, 23, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.wallpaper-credit__link {
+  color: #ffffff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.wallpaper-credit__link:hover {
+  text-decoration: underline;
+}
+
+.wallpaper-credit__next {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.2rem;
+  padding: 0.15rem;
+  border-radius: 999px;
+  color: rgba(248, 250, 252, 0.8);
+  transition: transform 160ms ease, color 120ms ease;
+}
+
+.wallpaper-credit__next:hover {
+  color: var(--accent-primary);
+  transform: rotate(90deg);
 }
 
 .top-bar {
@@ -207,6 +293,144 @@ button {
   transform: scale(1.03);
 }
 
+/* Quick Pins / Dock (Zero permissions, local monogram pills) */
+.quick-links {
+  width: 100%;
+  max-width: 31rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: -0.95rem;
+}
+
+.quick-links__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.quick-pin {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  transition: background-color 120ms ease, border-color 120ms ease,
+    transform 120ms ease;
+}
+
+.quick-pin:hover {
+  background-color: var(--bg-elevated);
+  border-color: rgba(148, 163, 184, 0.24);
+  transform: translateY(-1px);
+}
+
+.quick-pin__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0.32rem 0.68rem 0.32rem 0.38rem;
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.quick-pin:hover .quick-pin__link {
+  color: var(--text-primary);
+}
+
+.quick-pin__monogram {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 999px;
+  background-color: var(--bg-elevated);
+  color: var(--accent-primary);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.quick-pin__remove {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.25rem;
+  margin-left: -0.35rem;
+  border-radius: 999px;
+  color: var(--text-muted);
+}
+
+.quick-pin:hover .quick-pin__remove {
+  display: inline-flex;
+}
+
+.quick-pin__remove:hover {
+  background-color: var(--bg-surface);
+  color: var(--accent-primary);
+}
+
+.quick-pin--add {
+  width: 1.95rem;
+  height: 1.95rem;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.quick-pin--add:hover {
+  color: var(--accent-primary);
+}
+
+.quick-links__form {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.75rem;
+}
+
+.quick-links__input {
+  padding: 0.35rem 0.55rem;
+  border-radius: 0.45rem;
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.78rem;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.quick-links__input:focus {
+  border-color: var(--accent-primary);
+}
+
+.quick-links__input--title {
+  width: 34%;
+}
+
+.quick-links__input--url {
+  flex: 1;
+}
+
+.quick-links__save-btn {
+  padding: 0.35rem 0.7rem;
+  border-radius: 0.45rem;
+  background-color: var(--accent-primary);
+  color: #ffffff;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
 /* Weather Widget (Fixed minimum dimensions for CLS = 0) */
 .weather-card {
   width: 100%;
@@ -297,6 +521,20 @@ button {
   margin-top: 0.15rem;
 }
 
+.weather-card__astro {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.28rem;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.weather-card__astro svg {
+  color: var(--accent-primary);
+}
+
 .weather-card__metrics {
   display: flex;
   flex-direction: column;
@@ -321,8 +559,19 @@ button {
   flex-direction: column;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.35rem 0.25rem;
-  border-radius: 0.6rem;
+  padding: 0.4rem 0.25rem;
+  border-radius: 0.65rem;
+  border: 1px solid transparent;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.weather-card__day:hover {
+  background-color: var(--bg-elevated);
+}
+
+.weather-card__day--active {
+  background-color: var(--bg-elevated);
+  border-color: var(--accent-primary);
 }
 
 .weather-card__day-name {
@@ -349,6 +598,41 @@ button {
 
 .weather-card__day-min {
   color: var(--text-muted);
+}
+
+.weather-card__hourly {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.35rem;
+  padding-top: 0.85rem;
+  border-top: 1px dashed var(--border-subtle);
+}
+
+.weather-card__hour {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.3rem 0.15rem;
+  border-radius: 0.5rem;
+  background-color: var(--bg-elevated);
+  font-variant-numeric: tabular-nums;
+}
+
+.weather-card__hour-time {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.weather-card__hour-temp {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.weather-card__hour-pop {
+  font-size: 0.66rem;
+  color: var(--accent-primary);
 }
 
 /* Modal & Settings Drawer */
@@ -542,3 +826,85 @@ button {
   color: var(--text-primary);
   font-weight: 600;
 }
+
+/* Custom Wallpapers Upload & Gallery */
+.custom-wp-count {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.custom-wp-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  width: 100%;
+  padding: 0.58rem 0.8rem;
+  border-radius: 0.6rem;
+  background-color: var(--bg-elevated);
+  border: 1px dashed var(--border-subtle);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+
+.custom-wp-upload-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.custom-wp-empty {
+  font-size: 0.76rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.custom-wp-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.45rem;
+  max-height: 11.5rem;
+  overflow-y: auto;
+}
+
+.custom-wp-thumb {
+  position: relative;
+  height: 3.8rem;
+  border-radius: 0.5rem;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+}
+
+.custom-wp-thumb__remove {
+  position: absolute;
+  top: 0.22rem;
+  right: 0.22rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.65);
+  color: #ffffff;
+}
+
+.custom-wp-thumb__remove:hover {
+  background-color: var(--accent-primary);
+}
+
+.custom-wp-thumb__label {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 0.15rem 0.3rem;
+  font-size: 0.62rem;
+  color: #ffffff;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.78));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+

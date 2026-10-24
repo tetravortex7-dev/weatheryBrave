@@ -102,3 +102,33 @@ export function formatRelativeAge(
   const diffHours = Math.floor(diffMinutes / 60);
   return `Updated ${diffHours}h ago`;
 }
+
+/**
+ * Formats an Open-Meteo local ISO timestamp (e.g. "2026-10-23T06:42" or "2026-10-23T18:00")
+ * into user's 24h ("06:42") or 12h ("6:42 AM") clock string.
+ */
+export function formatIsoClockTime(
+  isoDateTime: string,
+  format: TimeFormat
+): string {
+  const timePart = isoDateTime.split('T')[1];
+  if (!timePart) {
+    return isoDateTime;
+  }
+  const [rawH, rawM] = timePart.split(':');
+  const hours = Number(rawH);
+  const minutes = Number(rawM);
+
+  if (!Number.isFinite(hours) || !Number.isFinite(minutes)) {
+    return timePart;
+  }
+
+  const minStr = pad2(minutes);
+  if (format === '12h') {
+    const hour12 = hours % 12 || 12;
+    const period = hours >= 12 ? 'PM' : 'AM';
+    return `${hour12}:${minStr} ${period}`;
+  }
+  return `${pad2(hours)}:${minStr}`;
+}
+

@@ -1,5 +1,13 @@
-import { DEFAULT_LOCATION, type LocationConfig } from './Location';
+import {
+  DEFAULT_LOCATION,
+  type LocationConfig,
+} from './Location';
+import {
+  DEFAULT_QUICK_LINKS,
+  type QuickLink,
+} from './QuickLink';
 import { type ThemeId } from './Theme';
+import { type WallpaperSourceMode } from './Wallpaper';
 
 export type TemperatureUnit = 'celsius' | 'fahrenheit';
 export type WindSpeedUnit = 'kmh' | 'ms' | 'mph';
@@ -14,6 +22,10 @@ export interface UserSettings {
   readonly showSeconds: boolean;
   readonly showGreeting: boolean;
   readonly customName: string;
+  readonly showQuickLinks: boolean;
+  readonly quickLinks: readonly QuickLink[];
+  readonly showWallpaper: boolean;
+  readonly wallpaperSource: WallpaperSourceMode;
 }
 
 export const DEFAULT_SETTINGS: UserSettings = {
@@ -25,4 +37,8 @@ export const DEFAULT_SETTINGS: UserSettings = {
   showSeconds: false,
   showGreeting: true,
   customName: '',
+  showQuickLinks: true,
+  quickLinks: DEFAULT_QUICK_LINKS,
+  showWallpaper: true,
+  wallpaperSource: 'both',
 };
