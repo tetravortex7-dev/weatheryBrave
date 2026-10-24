@@ -106,15 +106,22 @@ describe('BrowserSearchProvider URL vs Search resolution', () => {
     expect(resolveDirectUrl('how to use typescript')).toBeNull();
   });
 
-  it('resolves search bangs correctly', () => {
+  it('resolves search bangs correctly with and without query', () => {
     expect(resolveSearchBang('!yt interstellar trailer')).toBe(
       'https://www.youtube.com/results?search_query=interstellar%20trailer'
     );
+    expect(resolveSearchBang('!yt')).toBe('https://www.youtube.com');
     expect(resolveSearchBang('!gh brave')).toBe(
       'https://github.com/search?q=brave'
     );
+    expect(resolveSearchBang('!gh')).toBe('https://github.com');
     expect(resolveSearchBang('!r opensource')).toBe(
       'https://www.reddit.com/search/?q=opensource'
+    );
+    expect(resolveSearchBang('!r')).toBe('https://www.reddit.com');
+    expect(resolveSearchBang('!gpt')).toBe('https://chatgpt.com');
+    expect(resolveSearchBang('!gpt what is clean code')).toBe(
+      'https://chatgpt.com/?q=what%20is%20clean%20code'
     );
     expect(resolveSearchBang('no bang here')).toBeNull();
   });

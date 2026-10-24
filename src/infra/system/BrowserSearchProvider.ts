@@ -31,29 +31,86 @@ export function resolveDirectUrl(rawInput: string): string | null {
   return null;
 }
 
-const SEARCH_BANGS: Record<string, (q: string) => string> = {
-  '!yt': (q) => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`,
-  '!g': (q) => `https://www.google.com/search?q=${encodeURIComponent(q)}`,
-  '!d': (q) => `https://duckduckgo.com/?q=${encodeURIComponent(q)}`,
-  '!ddg': (q) => `https://duckduckgo.com/?q=${encodeURIComponent(q)}`,
-  '!b': (q) => `https://search.brave.com/search?q=${encodeURIComponent(q)}`,
-  '!gh': (q) => `https://github.com/search?q=${encodeURIComponent(q)}`,
-  '!r': (q) => `https://www.reddit.com/search/?q=${encodeURIComponent(q)}`,
-  '!w': (q) => `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(q)}`,
-  '!k': (q) => `https://kaspi.kz/shop/search/?text=${encodeURIComponent(q)}`,
+interface BangDefinition {
+  readonly homeUrl: string;
+  readonly searchUrl: (q: string) => string;
+}
+
+const SEARCH_BANGS: Record<string, BangDefinition> = {
+  '!yt': {
+    homeUrl: 'https://www.youtube.com',
+    searchUrl: (q) =>
+      `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`,
+  },
+  '!g': {
+    homeUrl: 'https://www.google.com',
+    searchUrl: (q) =>
+      `https://www.google.com/search?q=${encodeURIComponent(q)}`,
+  },
+  '!d': {
+    homeUrl: 'https://duckduckgo.com',
+    searchUrl: (q) =>
+      `https://duckduckgo.com/?q=${encodeURIComponent(q)}`,
+  },
+  '!ddg': {
+    homeUrl: 'https://duckduckgo.com',
+    searchUrl: (q) =>
+      `https://duckduckgo.com/?q=${encodeURIComponent(q)}`,
+  },
+  '!b': {
+    homeUrl: 'https://search.brave.com',
+    searchUrl: (q) =>
+      `https://search.brave.com/search?q=${encodeURIComponent(q)}`,
+  },
+  '!gh': {
+    homeUrl: 'https://github.com',
+    searchUrl: (q) =>
+      `https://github.com/search?q=${encodeURIComponent(q)}`,
+  },
+  '!r': {
+    homeUrl: 'https://www.reddit.com',
+    searchUrl: (q) =>
+      `https://www.reddit.com/search/?q=${encodeURIComponent(q)}`,
+  },
+  '!w': {
+    homeUrl: 'https://en.wikipedia.org',
+    searchUrl: (q) =>
+      `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(q)}`,
+  },
+  '!k': {
+    homeUrl: 'https://kaspi.kz',
+    searchUrl: (q) =>
+      `https://kaspi.kz/shop/search/?text=${encodeURIComponent(q)}`,
+  },
+  '!gpt': {
+    homeUrl: 'https://chatgpt.com',
+    searchUrl: (q) =>
+      `https://chatgpt.com/?q=${encodeURIComponent(q)}`,
+  },
+  '!x': {
+    homeUrl: 'https://x.com',
+    searchUrl: (q) =>
+      `https://x.com/search?q=${encodeURIComponent(q)}`,
+  },
 };
 
 export function resolveSearchBang(rawInput: string): string | null {
   const trimmed = rawInput.trim();
-  const match = trimmed.match(/^(![a-z0-9]+)\s+(.+)$/i);
+  const match = trimmed.match(/^(![a-z0-9]+)(?:\s+(.+))?$/i);
   if (!match) {
     return null;
   }
   const prefix = match[1]?.toLowerCase();
   const query = match[2]?.trim();
-  if (prefix && query && prefix in SEARCH_BANGS) {
-    const builder = SEARCH_BANGS[prefix];
-    return builder ? builder(query) : null;
+  if (prefix && prefix in SEARCH_BANGS) {
+    const bang = SEARCH_BANGS[prefix];
+    if (!bang) {
+      return null;
+    }
+    if (query && query.length > 0) {
+      return bang.searchUrl(query);
+    }
+    return bang.homeUrl;
   }
   return null;
 }
