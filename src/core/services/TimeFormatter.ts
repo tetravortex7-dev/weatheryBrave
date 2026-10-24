@@ -1,3 +1,4 @@
+import { type AppLanguage, getI18n } from '../i18n';
 import { type TimeFormat } from '../models/Settings';
 
 export interface FormattedClock {
@@ -6,33 +7,6 @@ export interface FormattedClock {
   readonly dateText: string;
 }
 
-const WEEKDAYS = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-] as const;
-
-const SHORT_WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
-
-const MONTHS = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-] as const;
-
 function pad2(n: number): string {
   return n < 10 ? `0${n}` : `${n}`;
 }
@@ -40,8 +14,10 @@ function pad2(n: number): string {
 export function formatClock(
   date: Date,
   format: TimeFormat,
-  showSeconds: boolean
+  showSeconds: boolean,
+  lang: AppLanguage = 'auto'
 ): FormattedClock {
+  const i18n = getI18n(lang);
   const rawHours = date.getHours();
   const minutes = pad2(date.getMinutes());
   const seconds = pad2(date.getSeconds());
@@ -61,18 +37,19 @@ export function formatClock(
     ? `${hoursText}:${minutes}:${seconds}`
     : `${hoursText}:${minutes}`;
 
-  const weekday = WEEKDAYS[date.getDay()] ?? 'Day';
-  const month = MONTHS[date.getMonth()] ?? 'Month';
+  const weekday = i18n.weekdays[date.getDay()] ?? 'Day';
+  const month = i18n.months[date.getMonth()] ?? 'Month';
   const dayOfMonth = date.getDate();
 
   return {
     timeText,
     periodText,
-    dateText: `${weekday}, ${month} ${dayOfMonth}`,
+    dateText: `${weekday}, ${dayOfMonth} ${month}`,
   };
 }
 
-export function formatShortWeekday(isoDate: string): string {
+export function formatShortWeekday(isoDate: string, lang: AppLanguage = 'auto'): string {
+  const i18n = getI18n(lang);
   const parts = isoDate.split('-');
   const year = Number(parts[0]);
   const month = Number(parts[1]);
@@ -83,30 +60,50 @@ export function formatShortWeekday(isoDate: string): string {
   }
 
   const localDate = new Date(year, month - 1, day);
-  return SHORT_WEEKDAYS[localDate.getDay()] ?? isoDate;
+  return i18n.shortWeekdays[localDate.getDay()] ?? isoDate;
 }
 
 export function formatRelativeAge(
   fetchedAtEpochMs: number,
-  nowEpochMs: number
+  nowEpochMs: number,
+  lang: AppLanguage = 'auto'
 ): string {
+  const i18n = getI18n(lang);
   const diffMs = Math.max(0, nowEpochMs - fetchedAtEpochMs);
   const diffMinutes = Math.floor(diffMs / 60_000);
 
   if (diffMinutes < 1) {
-    return 'Updated just now';
+    return i18n.updatedJustNow;
   }
   if (diffMinutes < 60) {
-    return `Updated ${diffMinutes}m ago`;
+    return i18n.updatedAgoMinutes(diffMinutes);
   }
   const diffHours = Math.floor(diffMinutes / 60);
-  return `Updated ${diffHours}h ago`;
+  return i18n.updatedAgoHours(diffHours);
 }
 
-/**
- * Formats an Open-Meteo local ISO timestamp (e.g. "2026-10-23T06:42" or "2026-10-23T18:00")
- * into user's 24h ("06:42") or 12h ("6:42 AM") clock string.
- */
+export function formatTimeInTimezone(
+  date: Date,
+  timeZone: string,
+  format: TimeFormat
+): string | null {
+  if (!timeZone || timeZone === 'none') {
+    return null;
+  }
+  try {
+    const is12h = format === '12h';
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      hour: is12h ? 'numeric' : '2-digit',
+      minute: '2-digit',
+      hour12: is12h,
+    });
+    return formatter.format(date);
+  } catch {
+    return null;
+  }
+}
+
 export function formatIsoClockTime(
   isoDateTime: string,
   format: TimeFormat

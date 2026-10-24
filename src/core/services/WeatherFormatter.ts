@@ -1,3 +1,4 @@
+import { type AppLanguage, getI18n } from '../i18n';
 import { type TemperatureUnit, type WindSpeedUnit } from '../models/Settings';
 
 export function convertTemperature(
@@ -37,17 +38,18 @@ export function formatWindSpeed(kmh: number, unit: WindSpeedUnit): string {
   return `${rounded} ${suffix}`;
 }
 
-export function describeUvIndex(uv: number): string {
+export function describeUvIndex(uv: number, lang: AppLanguage = 'auto'): string {
+  const i18n = getI18n(lang);
   const rounded = Math.round(uv);
   if (rounded <= 2) {
-    return `UV ${rounded} (Low)`;
+    return `UV ${rounded} (${i18n.uvLow})`;
   }
   if (rounded <= 5) {
-    return `UV ${rounded} (Mod)`;
+    return `UV ${rounded} (${i18n.uvMod})`;
   }
   if (rounded <= 7) {
-    return `UV ${rounded} (High)`;
+    return `UV ${rounded} (${i18n.uvHigh})`;
   }
-  return `UV ${rounded} (Very High)`;
+  return `UV ${rounded} (${i18n.uvVeryHigh})`;
 }
 

@@ -4,25 +4,36 @@ import {
   pickNextWallpaperFromPool,
   type BraveWallpaper,
 } from '../../core/models/Wallpaper';
-import { createEl } from '../dom/domHelpers';
+import { clearChildren, createEl } from '../dom/domHelpers';
 import { createUiIconSvg } from '../dom/svgIcons';
 
 const LAST_WALLPAPER_KEY = 'wb_wallpaper_idx';
+
+export interface WallpaperControllerHandlers {
+  onToggleLock(locked: boolean): void;
+}
 
 export class WallpaperController {
   private readonly bgLayerEl: HTMLElement;
   private readonly creditBarEl: HTMLElement;
   private readonly creditPrefixEl: HTMLElement;
   private readonly creditLinkEl: HTMLAnchorElement;
+  private readonly lockBtn: HTMLButtonElement;
+  private readonly nextBtn: HTMLButtonElement;
   private currentIndex: number;
   private settings: UserSettings;
   private customWallpapers: readonly BraveWallpaper[] = [];
 
-  constructor(initialSettings: UserSettings) {
+  constructor(
+    initialSettings: UserSettings,
+    private readonly handlers: WallpaperControllerHandlers
+  ) {
     this.settings = initialSettings;
-    this.currentIndex = this.loadAndAdvanceIndex(
-      buildWallpaperPool(this.settings.wallpaperSource, this.customWallpapers)
+    const initialPool = buildWallpaperPool(
+      this.settings.wallpaperSource,
+      this.customWallpapers
     );
+    this.currentIndex = this.loadOrAdvanceIndex(initialPool);
 
     this.bgLayerEl = createEl('div', {
       className: 'wallpaper-layer',
@@ -41,12 +52,31 @@ export class WallpaperController {
         target: '_blank',
         rel: 'noopener noreferrer',
       },
-    });
+    }) as HTMLAnchorElement;
 
-    const nextBtn = createEl(
+    this.lockBtn = createEl(
       'button',
       {
-        className: 'wallpaper-credit__next',
+        className: 'wallpaper-credit__btn wallpaper-credit__btn--lock',
+        attrs: {
+          type: 'button',
+          title: this.settings.lockWallpaper
+            ? 'Wallpaper locked (Click to unlock)'
+            : 'Lock this wallpaper',
+          'aria-label': 'Lock wallpaper',
+        },
+      },
+      [createUiIconSvg(this.settings.lockWallpaper ? 'lock' : 'unlock', 13)]
+    ) as HTMLButtonElement;
+    this.lockBtn.addEventListener('click', () => {
+      const nextLocked = !this.settings.lockWallpaper;
+      this.handlers.onToggleLock(nextLocked);
+    });
+
+    this.nextBtn = createEl(
+      'button',
+      {
+        className: 'wallpaper-credit__btn wallpaper-credit__btn--next',
         attrs: {
           type: 'button',
           title: 'Next wallpaper',
@@ -54,13 +84,14 @@ export class WallpaperController {
         },
       },
       [createUiIconSvg('refresh', 13)]
-    );
-    nextBtn.addEventListener('click', () => this.cycleNext());
+    ) as HTMLButtonElement;
+    this.nextBtn.addEventListener('click', () => this.cycleNext());
 
     this.creditBarEl = createEl('footer', { className: 'wallpaper-credit' }, [
       this.creditPrefixEl,
       this.creditLinkEl,
-      nextBtn,
+      this.lockBtn,
+      this.nextBtn,
     ]);
 
     this.applyCurrent();
@@ -76,6 +107,20 @@ export class WallpaperController {
 
   public updateSettings(settings: UserSettings): void {
     this.settings = settings;
+    clearChildren(this.lockBtn);
+    this.lockBtn.appendChild(
+      createUiIconSvg(this.settings.lockWallpaper ? 'lock' : 'unlock', 13)
+    );
+    this.lockBtn.classList.toggle(
+      'wallpaper-credit__btn--active',
+      this.settings.lockWallpaper
+    );
+    this.lockBtn.setAttribute(
+      'title',
+      this.settings.lockWallpaper
+        ? 'Wallpaper locked (Click to unlock)'
+        : 'Lock this wallpaper'
+    );
     this.applyCurrent();
   }
 
@@ -85,8 +130,7 @@ export class WallpaperController {
   ): void {
     this.customWallpapers = customWallpapers;
     if (selectNewest && customWallpapers.length > 0) {
-      // Newly added custom wallpapers sit at the start of the pool
-      this.currentIndex = Math.max(0, customWallpapers.length - 1);
+      this.currentIndex = 0;
       this.saveIndex(this.currentIndex);
     }
     this.applyCurrent();
@@ -107,14 +151,17 @@ export class WallpaperController {
     );
   }
 
-  private loadAndAdvanceIndex(pool: readonly BraveWallpaper[]): number {
+  private loadOrAdvanceIndex(pool: readonly BraveWallpaper[]): number {
     try {
       const raw = window.localStorage.getItem(LAST_WALLPAPER_KEY);
       const prev = raw !== null ? Number(raw) : undefined;
-      const picked = pickNextWallpaperFromPool(
-        pool,
-        Number.isFinite(prev) ? prev : undefined
-      );
+      const validPrev = Number.isFinite(prev) ? (prev as number) : undefined;
+
+      if (this.settings.lockWallpaper && validPrev !== undefined) {
+        return validPrev;
+      }
+
+      const picked = pickNextWallpaperFromPool(pool, validPrev);
       this.saveIndex(picked.index);
       return picked.index;
     } catch {
@@ -126,7 +173,6 @@ export class WallpaperController {
     try {
       window.localStorage.setItem(LAST_WALLPAPER_KEY, `${index}`);
     } catch {
-      // Ignore storage errors
     }
   }
 
@@ -147,6 +193,11 @@ export class WallpaperController {
     if (!wp) {
       return;
     }
+
+    const dimAlpha = (this.settings.wallpaperDim / 100).toFixed(2);
+    const blurPx = `${this.settings.wallpaperBlur}px`;
+    this.bgLayerEl.style.setProperty('--wp-dim-alpha', dimAlpha);
+    this.bgLayerEl.style.setProperty('--wp-blur', blurPx);
 
     this.bgLayerEl.style.backgroundImage = `url("${wp.filename}")`;
     if (wp.isCustom) {

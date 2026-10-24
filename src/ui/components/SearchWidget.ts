@@ -20,7 +20,7 @@ export class SearchWidget {
       className: 'search-bar__input',
       attrs: {
         type: 'text',
-        placeholder: 'Search the web or type a URL…',
+        placeholder: 'Search the web or type URL (!yt, !gh, !r, !d)…',
         autocomplete: 'off',
         autocapitalize: 'off',
         spellcheck: 'false',
@@ -94,7 +94,6 @@ export class SearchWidget {
       this.executeSearch('CURRENT_TAB');
     });
 
-    // Global "/" hotkey to focus the search bar when no input/modal is active
     document.addEventListener('keydown', (e) => {
       if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) {
         return;

@@ -1,3 +1,4 @@
+import { getI18n } from '../../core/i18n';
 import { type UserSettings } from '../../core/models/Settings';
 import {
   type DailyForecastItem,
@@ -89,15 +90,12 @@ export class WeatherWidget {
     );
     refreshBtn.addEventListener('click', () => handlers.onManualRefresh());
 
-    const headerActions = createEl(
-      'div',
-      { className: 'weather-card__header-actions' },
-      [this.statusBadge, refreshBtn]
-    );
-
     const header = createEl('header', { className: 'weather-card__header' }, [
       locationBtn,
-      headerActions,
+      createEl('div', { className: 'weather-card__header-actions' }, [
+        this.statusBadge,
+        refreshBtn,
+      ]),
     ]);
 
     this.currentIconSlot = createEl('div', {
@@ -158,25 +156,44 @@ export class WeatherWidget {
       },
       [header, currentRow, this.dailyGridEl, this.hourlyStripEl]
     );
+
+    this.applyViewMode();
   }
 
   public getElement(): HTMLElement {
     return this.root;
   }
 
+  private applyViewMode(): void {
+    const isCompact = this.settings.weatherViewMode === 'compact';
+    this.root.classList.toggle('weather-card--compact', isCompact);
+    this.dailyGridEl.hidden = isCompact;
+    this.hourlyStripEl.hidden = isCompact || !this.selectedDayIso;
+    this.feelsLikeEl.hidden = false;
+    this.humidityEl.hidden = false;
+    this.windEl.hidden = false;
+    this.astroBadgeEl.hidden = isCompact;
+  }
+
   public updateSettings(settings: UserSettings): void {
     this.settings = settings;
     this.locationBtnText.textContent = settings.location.name;
+    this.applyViewMode();
     if (this.currentData) {
       this.renderWeather(this.currentData, false);
     }
   }
 
   public renderWeather(data: WeatherData, isStale: boolean): void {
+    const i18n = getI18n(this.settings.language);
     this.currentData = data;
     this.locationBtnText.textContent = data.locationName;
 
-    const wmo = describeWmoCode(data.current.weatherCode, data.current.isDay);
+    const wmo = describeWmoCode(
+      data.current.weatherCode,
+      data.current.isDay,
+      this.settings.language
+    );
     clearChildren(this.currentIconSlot);
     this.currentIconSlot.appendChild(createWeatherIconSvg(wmo.icon, 44));
 
@@ -192,16 +209,19 @@ export class WeatherWidget {
       data.current.apparentTemperatureCelsius,
       this.settings.temperatureUnit
     );
-    this.feelsLikeEl.textContent = `Feels ${feels}`;
-    this.humidityEl.textContent = `Humidity ${Math.round(data.current.relativeHumidityPercent)}%`;
-    this.windEl.textContent = `Wind ${formatWindSpeed(
+    this.feelsLikeEl.textContent = `${i18n.feels} ${feels}`;
+    this.humidityEl.textContent = `${i18n.humidity} ${Math.round(
+      data.current.relativeHumidityPercent
+    )}%`;
+    this.windEl.textContent = `${i18n.wind} ${formatWindSpeed(
       data.current.windSpeedKmh,
       this.settings.windSpeedUnit
     )}`;
 
     const ageText = formatRelativeAge(
       data.fetchedAtEpochMs,
-      this.clock.epochMs()
+      this.clock.epochMs(),
+      this.settings.language
     );
     this.statusBadge.textContent = isStale ? `${ageText} · syncing` : ageText;
 
@@ -214,7 +234,8 @@ export class WeatherWidget {
       this.renderWeather(fallback, false);
       const age = formatRelativeAge(
         fallback.fetchedAtEpochMs,
-        this.clock.epochMs()
+        this.clock.epochMs(),
+        this.settings.language
       );
       this.statusBadge.textContent = `Offline · ${age}`;
       return;
@@ -226,8 +247,9 @@ export class WeatherWidget {
     today: DailyForecastItem | undefined,
     isDay: boolean
   ): void {
+    const i18n = getI18n(this.settings.language);
     clearChildren(this.astroBadgeEl);
-    if (!today) {
+    if (!today || this.settings.weatherViewMode === 'compact') {
       this.astroBadgeEl.hidden = true;
       return;
     }
@@ -235,16 +257,16 @@ export class WeatherWidget {
     const parts: string[] = [];
     if (isDay && today.sunsetIso) {
       parts.push(
-        `Sunset ${formatIsoClockTime(today.sunsetIso, this.settings.timeFormat)}`
+        `${i18n.sunset} ${formatIsoClockTime(today.sunsetIso, this.settings.timeFormat)}`
       );
     } else if (!isDay && today.sunriseIso) {
       parts.push(
-        `Sunrise ${formatIsoClockTime(today.sunriseIso, this.settings.timeFormat)}`
+        `${i18n.sunrise} ${formatIsoClockTime(today.sunriseIso, this.settings.timeFormat)}`
       );
     }
 
     if (typeof today.uvIndexMax === 'number') {
-      parts.push(describeUvIndex(today.uvIndexMax));
+      parts.push(describeUvIndex(today.uvIndexMax, this.settings.language));
     }
 
     if (parts.length === 0) {
@@ -260,11 +282,19 @@ export class WeatherWidget {
   }
 
   private renderDaily(data: WeatherData): void {
+    const i18n = getI18n(this.settings.language);
     clearChildren(this.dailyGridEl);
 
     for (const [idx, day] of data.daily.slice(0, 5).entries()) {
-      const dayLabel = idx === 0 ? 'Today' : formatShortWeekday(day.dateIso);
-      const descriptor = describeWmoCode(day.weatherCode, true);
+      const dayLabel =
+        idx === 0
+          ? i18n.today
+          : formatShortWeekday(day.dateIso, this.settings.language);
+      const descriptor = describeWmoCode(
+        day.weatherCode,
+        true,
+        this.settings.language
+      );
       const maxText = formatTemperature(
         day.tempMaxCelsius,
         this.settings.temperatureUnit

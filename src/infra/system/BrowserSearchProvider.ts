@@ -17,11 +17,6 @@ function getChromeSearchApi(): ChromeSearchApi | undefined {
   return globalAny.chrome?.search;
 }
 
-/**
- * Resolves whether a user query is a direct URL / domain so pressing Enter on
- * "github.com" or "https://brave.com" navigates directly, while all other text
- * is delegated to the browser's default search engine via `chrome.search.query`.
- */
 export function resolveDirectUrl(rawInput: string): string | null {
   const trimmed = rawInput.trim();
   if (!trimmed || /\s/.test(trimmed)) {
@@ -36,6 +31,33 @@ export function resolveDirectUrl(rawInput: string): string | null {
   return null;
 }
 
+const SEARCH_BANGS: Record<string, (q: string) => string> = {
+  '!yt': (q) => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`,
+  '!g': (q) => `https://www.google.com/search?q=${encodeURIComponent(q)}`,
+  '!d': (q) => `https://duckduckgo.com/?q=${encodeURIComponent(q)}`,
+  '!ddg': (q) => `https://duckduckgo.com/?q=${encodeURIComponent(q)}`,
+  '!b': (q) => `https://search.brave.com/search?q=${encodeURIComponent(q)}`,
+  '!gh': (q) => `https://github.com/search?q=${encodeURIComponent(q)}`,
+  '!r': (q) => `https://www.reddit.com/search/?q=${encodeURIComponent(q)}`,
+  '!w': (q) => `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(q)}`,
+  '!k': (q) => `https://kaspi.kz/shop/search/?text=${encodeURIComponent(q)}`,
+};
+
+export function resolveSearchBang(rawInput: string): string | null {
+  const trimmed = rawInput.trim();
+  const match = trimmed.match(/^(![a-z0-9]+)\s+(.+)$/i);
+  if (!match) {
+    return null;
+  }
+  const prefix = match[1]?.toLowerCase();
+  const query = match[2]?.trim();
+  if (prefix && query && prefix in SEARCH_BANGS) {
+    const builder = SEARCH_BANGS[prefix];
+    return builder ? builder(query) : null;
+  }
+  return null;
+}
+
 export class BrowserSearchProvider implements ISearchProvider {
   public search(
     query: string,
@@ -43,6 +65,16 @@ export class BrowserSearchProvider implements ISearchProvider {
   ): void {
     const trimmed = query.trim();
     if (!trimmed) {
+      return;
+    }
+
+    const bangUrl = resolveSearchBang(trimmed);
+    if (bangUrl) {
+      if (disposition === 'NEW_TAB') {
+        window.open(bangUrl, '_blank', 'noopener,noreferrer');
+      } else {
+        window.location.assign(bangUrl);
+      }
       return;
     }
 
@@ -62,7 +94,6 @@ export class BrowserSearchProvider implements ISearchProvider {
       return;
     }
 
-    // Fallback when running in local Vite dev server outside the extension context
     const fallbackUrl = `https://search.brave.com/search?q=${encodeURIComponent(
       trimmed
     )}`;

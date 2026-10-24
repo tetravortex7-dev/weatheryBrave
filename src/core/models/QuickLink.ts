@@ -4,7 +4,7 @@ export interface QuickLink {
   readonly url: string;
 }
 
-export const MAX_QUICK_LINKS = 8;
+export const MAX_QUICK_LINKS = 16;
 
 export const DEFAULT_QUICK_LINKS: readonly QuickLink[] = [
   { id: 'pin-github', title: 'GitHub', url: 'https://github.com' },

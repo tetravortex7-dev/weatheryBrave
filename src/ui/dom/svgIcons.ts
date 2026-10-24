@@ -96,7 +96,10 @@ export type UiIconKind =
   | 'arrow-right'
   | 'plus'
   | 'sunrise'
-  | 'sunset';
+  | 'sunset'
+  | 'lock'
+  | 'unlock'
+  | 'eye';
 
 export function createUiIconSvg(
   kind: UiIconKind,
@@ -140,6 +143,27 @@ export function createUiIconSvg(
     case 'sunset':
       appendPath(svg, 'M12 2v6M9 5l3 3 3-3M4 18h16M6 22h12');
       appendPath(svg, 'M8 18a4 4 0 0 1 8 0');
+      break;
+    case 'lock':
+      appendPath(
+        svg,
+        'M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2Z'
+      );
+      appendPath(svg, 'M7 11V7a5 5 0 0 1 10 0v4');
+      break;
+    case 'unlock':
+      appendPath(
+        svg,
+        'M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2Z'
+      );
+      appendPath(svg, 'M7 11V7a5 5 0 0 1 9.9-1');
+      break;
+    case 'eye':
+      appendPath(
+        svg,
+        'M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z'
+      );
+      appendCircle(svg, '12', '12', '3');
       break;
   }
 

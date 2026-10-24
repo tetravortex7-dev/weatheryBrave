@@ -1,3 +1,4 @@
+import { getI18n } from './core/i18n';
 import { WeatherSyncService } from './core/services/WeatherSyncService';
 import { OpenMeteoGeocodingProvider } from './infra/api/OpenMeteoGeocodingProvider';
 import { OpenMeteoWeatherProvider } from './infra/api/OpenMeteoWeatherProvider';
@@ -8,10 +9,12 @@ import { SystemClock } from './infra/system/SystemClock';
 import { ClockWidget } from './ui/components/ClockWidget';
 import { LocationModal } from './ui/components/LocationModal';
 import { QuickLinksWidget } from './ui/components/QuickLinksWidget';
+import { ScratchpadWidget } from './ui/components/ScratchpadWidget';
 import { SearchWidget } from './ui/components/SearchWidget';
 import { SettingsDrawer } from './ui/components/SettingsDrawer';
 import { WallpaperController } from './ui/components/WallpaperController';
 import { WeatherWidget } from './ui/components/WeatherWidget';
+import { ZenModeController } from './ui/components/ZenModeController';
 import { createEl } from './ui/dom/domHelpers';
 import { createUiIconSvg } from './ui/dom/svgIcons';
 import { ThemeManager } from './ui/themes/ThemeManager';
@@ -22,7 +25,6 @@ function bootstrap(): void {
     return;
   }
 
-  // 1. Instantiate Infrastructure & Core Services
   const clock = new SystemClock();
   const storage = new LocalStorageAdapter();
   const customWallpaperStore = new IndexedDbWallpaperStore();
@@ -32,14 +34,24 @@ function bootstrap(): void {
   const weatherSync = new WeatherSyncService(weatherProvider, storage, clock);
   const themeManager = new ThemeManager();
 
-  // 2. Load Synchronous Persisted Settings & Apply Theme
   let currentSettings = storage.loadSettings();
   themeManager.applyTheme(currentSettings.theme);
+  document.title = getI18n(currentSettings.language).newTabTitle;
 
-  // 3. Instantiate UI Components
-  const wallpaperController = new WallpaperController(currentSettings);
+  let settingsDrawer: SettingsDrawer;
+
+  const wallpaperController = new WallpaperController(currentSettings, {
+    onToggleLock: (locked) => {
+      currentSettings = { ...currentSettings, lockWallpaper: locked };
+      storage.saveSettings(currentSettings);
+      wallpaperController.updateSettings(currentSettings);
+      settingsDrawer.updateSettings(currentSettings);
+    },
+  });
+
   const clockWidget = new ClockWidget(clock, currentSettings);
   const searchWidget = new SearchWidget(searchProvider);
+
   const quickLinksWidget = new QuickLinksWidget(currentSettings, (nextLinks) => {
     currentSettings = {
       ...currentSettings,
@@ -47,6 +59,19 @@ function bootstrap(): void {
     };
     storage.saveSettings(currentSettings);
     quickLinksWidget.updateSettings(currentSettings);
+  });
+
+  const scratchpadWidget = new ScratchpadWidget(currentSettings, {
+    onUpdateContent: (text) => {
+      currentSettings = { ...currentSettings, scratchpadContent: text };
+      storage.saveSettings(currentSettings);
+    },
+    onClose: () => {
+      currentSettings = { ...currentSettings, showScratchpad: false };
+      storage.saveSettings(currentSettings);
+      scratchpadWidget.updateSettings(currentSettings);
+      settingsDrawer.updateSettings(currentSettings);
+    },
   });
 
   const runWeatherSync = (forceRefresh: boolean): void => {
@@ -87,7 +112,7 @@ function bootstrap(): void {
     settingsDrawer.setCustomWallpapers(customList);
   };
 
-  const settingsDrawer = new SettingsDrawer(currentSettings, {
+  settingsDrawer = new SettingsDrawer(currentSettings, {
     onChangeSettings: (updated) => {
       const themeChanged = updated.theme !== currentSettings.theme;
       currentSettings = updated;
@@ -97,10 +122,13 @@ function bootstrap(): void {
         themeManager.applyTheme(currentSettings.theme);
       }
 
+      document.title = getI18n(currentSettings.language).newTabTitle;
+
       clockWidget.updateSettings(currentSettings);
       quickLinksWidget.updateSettings(currentSettings);
       wallpaperController.updateSettings(currentSettings);
       weatherWidget.updateSettings(currentSettings);
+      scratchpadWidget.updateSettings(currentSettings);
     },
     onUploadWallpapers: async (files) => {
       for (const file of Array.from(files)) {
@@ -114,7 +142,22 @@ function bootstrap(): void {
     },
   });
 
-  // 4. Top-Right Minimal Controls
+  const zenController = new ZenModeController(appRoot);
+
+  const zenBtn = createEl(
+    'button',
+    {
+      className: 'icon-btn',
+      attrs: {
+        type: 'button',
+        title: 'Zen mode — hide widgets (Z)',
+        'aria-label': 'Zen mode',
+      },
+    },
+    [createUiIconSvg('eye', 18)]
+  );
+  zenBtn.addEventListener('click', () => zenController.toggle(true));
+
   const settingsBtn = createEl(
     'button',
     {
@@ -129,16 +172,20 @@ function bootstrap(): void {
   );
   settingsBtn.addEventListener('click', () => settingsDrawer.open());
 
-  const topBar = createEl('nav', { className: 'top-bar' }, [settingsBtn]);
+  const topBar = createEl('nav', { className: 'top-bar' }, [zenBtn, settingsBtn]);
 
-  // 5. Mount DOM & Trigger Stale-While-Revalidate Sync
-  document.body.prepend(wallpaperController.getBackgroundElement());
+  document.body.prepend(
+    wallpaperController.getBackgroundElement(),
+    zenController.getHintPill()
+  );
+
   appRoot.append(
     topBar,
     clockWidget.getElement(),
     searchWidget.getElement(),
     quickLinksWidget.getElement(),
     weatherWidget.getElement(),
+    scratchpadWidget.getElement(),
     wallpaperController.getCreditElement(),
     locationModal.getElement(),
     settingsDrawer.getElement()

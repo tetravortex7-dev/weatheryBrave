@@ -37,7 +37,7 @@ function makeWeather(fetchedAtEpochMs: number): WeatherData {
 describe('WeatherSyncService (Stale-While-Revalidate)', () => {
   it('renders fresh cache immediately and skips network call', async () => {
     const nowMs = 1_000_000;
-    const cachedData = makeWeather(nowMs - 5 * 60_000); // 5 minutes old
+    const cachedData = makeWeather(nowMs - 5 * 60_000);
 
     const fetchWeather = vi.fn();
     const provider: IWeatherProvider = { fetchWeather };

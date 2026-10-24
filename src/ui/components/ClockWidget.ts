@@ -1,7 +1,7 @@
 import { type UserSettings } from '../../core/models/Settings';
 import { type IClock } from '../../core/ports/IClock';
 import { getGreetingText } from '../../core/services/GreetingService';
-import { formatClock } from '../../core/services/TimeFormatter';
+import { formatClock, formatTimeInTimezone } from '../../core/services/TimeFormatter';
 import { createEl } from '../dom/domHelpers';
 
 export class ClockWidget {
@@ -9,6 +9,7 @@ export class ClockWidget {
   private readonly timeEl: HTMLElement;
   private readonly periodEl: HTMLElement;
   private readonly dateEl: HTMLElement;
+  private readonly secondaryTimeEl: HTMLElement;
   private readonly greetingEl: HTMLElement;
   private timerId: number | null = null;
   private settings: UserSettings;
@@ -28,6 +29,10 @@ export class ClockWidget {
     ]);
 
     this.dateEl = createEl('p', { className: 'clock-widget__date' });
+    this.secondaryTimeEl = createEl('p', {
+      className: 'clock-widget__secondary',
+      attrs: { hidden: 'true' },
+    });
     this.greetingEl = createEl('p', { className: 'clock-widget__greeting' });
 
     this.root = createEl(
@@ -36,7 +41,7 @@ export class ClockWidget {
         className: 'clock-widget',
         attrs: { 'aria-label': 'Current Time and Date' },
       },
-      [timeRow, this.dateEl, this.greetingEl]
+      [timeRow, this.dateEl, this.secondaryTimeEl, this.greetingEl]
     );
 
     this.renderNow();
@@ -67,7 +72,8 @@ export class ClockWidget {
     const formatted = formatClock(
       now,
       this.settings.timeFormat,
-      this.settings.showSeconds
+      this.settings.showSeconds,
+      this.settings.language
     );
 
     this.timeEl.textContent = formatted.timeText;
@@ -75,11 +81,25 @@ export class ClockWidget {
     this.periodEl.hidden = formatted.periodText.length === 0;
     this.dateEl.textContent = formatted.dateText;
 
+    const secTime = formatTimeInTimezone(
+      now,
+      this.settings.secondaryTimezone,
+      this.settings.timeFormat
+    );
+    if (secTime) {
+      this.secondaryTimeEl.hidden = false;
+      const tzLabel = this.settings.secondaryTimezone.replace('_', ' ');
+      this.secondaryTimeEl.textContent = `${tzLabel}: ${secTime}`;
+    } else {
+      this.secondaryTimeEl.hidden = true;
+    }
+
     if (this.settings.showGreeting) {
       this.greetingEl.hidden = false;
       this.greetingEl.textContent = getGreetingText(
         now,
-        this.settings.customName
+        this.settings.customName,
+        this.settings.language
       );
     } else {
       this.greetingEl.hidden = true;

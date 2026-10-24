@@ -16,6 +16,7 @@ export class QuickLinksWidget {
   private readonly urlInputEl: HTMLInputElement;
   private settings: UserSettings;
   private isAdding: boolean = false;
+  private draggedIndex: number | null = null;
 
   constructor(
     initialSettings: UserSettings,
@@ -33,7 +34,7 @@ export class QuickLinksWidget {
         maxlength: '20',
         autocomplete: 'off',
       },
-    });
+    }) as HTMLInputElement;
 
     this.urlInputEl = createEl('input', {
       className: 'quick-links__input quick-links__input--url',
@@ -42,7 +43,7 @@ export class QuickLinksWidget {
         placeholder: 'URL (e.g. github.com)',
         autocomplete: 'off',
       },
-    });
+    }) as HTMLInputElement;
 
     const saveBtn = createEl('button', {
       className: 'quick-links__save-btn',
@@ -64,7 +65,7 @@ export class QuickLinksWidget {
       'form',
       { className: 'quick-links__form', attrs: { hidden: 'true' } },
       [this.titleInputEl, this.urlInputEl, saveBtn, cancelBtn]
-    );
+    ) as HTMLFormElement;
 
     this.formEl.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -128,9 +129,31 @@ export class QuickLinksWidget {
     this.onUpdateLinks(nextLinks);
   }
 
+  private clearDropIndicators(): void {
+    const pills = this.listEl.querySelectorAll('.quick-pin');
+    for (const p of Array.from(pills)) {
+      p.classList.remove(
+        'quick-pin--dragging',
+        'quick-pin--drop-before',
+        'quick-pin--drop-after'
+      );
+    }
+  }
+
+  private moveLink(fromIdx: number, toIdx: number): void {
+    if (fromIdx === toIdx) return;
+    const items = [...this.settings.quickLinks];
+    const [moved] = items.splice(fromIdx, 1);
+    if (!moved) return;
+    items.splice(toIdx, 0, moved);
+    this.onUpdateLinks(items);
+  }
+
   private render(): void {
     this.root.hidden = !this.settings.showQuickLinks;
     clearChildren(this.listEl);
+
+    const isNewTab = this.settings.linkTarget === 'new-tab';
 
     for (const [idx, item] of this.settings.quickLinks.entries()) {
       const badge = createEl('span', {
@@ -143,14 +166,20 @@ export class QuickLinksWidget {
         textContent: item.title,
       });
 
+      const anchorAttrs: Record<string, string> = {
+        href: item.url,
+        title: `${item.title} (Alt+${idx + 1})`,
+      };
+      if (isNewTab) {
+        anchorAttrs['target'] = '_blank';
+        anchorAttrs['rel'] = 'noopener noreferrer';
+      }
+
       const anchor = createEl(
         'a',
         {
           className: 'quick-pin__link',
-          attrs: {
-            href: item.url,
-            title: `${item.title} (Alt+${idx + 1})`,
-          },
+          attrs: anchorAttrs,
         },
         [badge, label]
       );
@@ -173,10 +202,57 @@ export class QuickLinksWidget {
         this.removeLink(item.id);
       });
 
-      const pill = createEl('div', { className: 'quick-pin' }, [
-        anchor,
-        removeBtn,
-      ]);
+      const pill = createEl(
+        'div',
+        {
+          className: 'quick-pin',
+          attrs: { draggable: 'true' },
+        },
+        [anchor, removeBtn]
+      );
+
+      pill.addEventListener('dragstart', (e) => {
+        this.draggedIndex = idx;
+        pill.classList.add('quick-pin--dragging');
+        if (e.dataTransfer) {
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', `${idx}`);
+        }
+      });
+
+      pill.addEventListener('dragend', () => {
+        this.draggedIndex = null;
+        this.clearDropIndicators();
+      });
+
+      pill.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if (this.draggedIndex === null || this.draggedIndex === idx) {
+          return;
+        }
+        if (e.dataTransfer) {
+          e.dataTransfer.dropEffect = 'move';
+        }
+        this.clearDropIndicators();
+        if (this.draggedIndex < idx) {
+          pill.classList.add('quick-pin--drop-after');
+        } else {
+          pill.classList.add('quick-pin--drop-before');
+        }
+      });
+
+      pill.addEventListener('dragleave', () => {
+        pill.classList.remove('quick-pin--drop-before', 'quick-pin--drop-after');
+      });
+
+      pill.addEventListener('drop', (e) => {
+        e.preventDefault();
+        this.clearDropIndicators();
+        if (this.draggedIndex !== null && this.draggedIndex !== idx) {
+          this.moveLink(this.draggedIndex, idx);
+        }
+      });
+
       this.listEl.appendChild(pill);
     }
 
@@ -206,11 +282,15 @@ export class QuickLinksWidget {
         return;
       }
       const num = Number(e.key);
-      if (num >= 1 && num <= 8) {
+      if (num >= 1 && num <= 9) {
         const target = this.settings.quickLinks[num - 1];
         if (target) {
           e.preventDefault();
-          window.location.assign(target.url);
+          if (this.settings.linkTarget === 'new-tab') {
+            window.open(target.url, '_blank', 'noopener,noreferrer');
+          } else {
+            window.location.assign(target.url);
+          }
         }
       }
     });

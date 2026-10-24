@@ -3,11 +3,14 @@ import {
   MAX_QUICK_LINKS,
   type QuickLink,
 } from '../../core/models/QuickLink';
+import { type AppLanguage, SUPPORTED_LANGUAGES } from '../../core/i18n';
 import {
   DEFAULT_SETTINGS,
+  type LinkTargetMode,
   type TemperatureUnit,
   type TimeFormat,
   type UserSettings,
+  type WeatherViewMode,
   type WindSpeedUnit,
 } from '../../core/models/Settings';
 import { isValidThemeId } from '../../core/models/Theme';
@@ -24,23 +27,38 @@ export const STORAGE_KEYS = {
   WEATHER_CACHE: 'wb_weather_cache',
 } as const;
 
-function isTempUnit(val: unknown): val is TemperatureUnit {
+export function isAppLanguage(val: unknown): val is AppLanguage {
+  return (
+    typeof val === 'string' &&
+    SUPPORTED_LANGUAGES.some((lang) => lang.id === val)
+  );
+}
+
+export function isTempUnit(val: unknown): val is TemperatureUnit {
   return val === 'celsius' || val === 'fahrenheit';
 }
 
-function isWindUnit(val: unknown): val is WindSpeedUnit {
+export function isWindUnit(val: unknown): val is WindSpeedUnit {
   return val === 'kmh' || val === 'ms' || val === 'mph';
 }
 
-function isTimeFormat(val: unknown): val is TimeFormat {
+export function isTimeFormat(val: unknown): val is TimeFormat {
   return val === '24h' || val === '12h';
 }
 
-function isWallpaperSource(val: unknown): val is WallpaperSourceMode {
+export function isWallpaperSource(val: unknown): val is WallpaperSourceMode {
   return val === 'both' || val === 'custom-only' || val === 'builtin-only';
 }
 
-function parseQuickLinks(raw: unknown): readonly QuickLink[] {
+export function isWeatherViewMode(val: unknown): val is WeatherViewMode {
+  return val === 'full' || val === 'compact';
+}
+
+export function isLinkTargetMode(val: unknown): val is LinkTargetMode {
+  return val === 'current' || val === 'new-tab';
+}
+
+export function parseQuickLinks(raw: unknown): readonly QuickLink[] {
   if (!Array.isArray(raw)) {
     return DEFAULT_QUICK_LINKS;
   }
@@ -98,6 +116,9 @@ export class LocalStorageAdapter implements ISettingsStore, IWeatherCacheStore {
           : DEFAULT_SETTINGS.location;
 
       return {
+        language: isAppLanguage(parsed['language'])
+          ? parsed['language']
+          : DEFAULT_SETTINGS.language,
         theme: isValidThemeId(parsed['theme'])
           ? parsed['theme']
           : DEFAULT_SETTINGS.theme,
@@ -123,6 +144,10 @@ export class LocalStorageAdapter implements ISettingsStore, IWeatherCacheStore {
           typeof parsed['customName'] === 'string'
             ? parsed['customName']
             : DEFAULT_SETTINGS.customName,
+        secondaryTimezone:
+          typeof parsed['secondaryTimezone'] === 'string'
+            ? parsed['secondaryTimezone']
+            : DEFAULT_SETTINGS.secondaryTimezone,
         showQuickLinks:
           typeof parsed['showQuickLinks'] === 'boolean'
             ? parsed['showQuickLinks']
@@ -135,6 +160,34 @@ export class LocalStorageAdapter implements ISettingsStore, IWeatherCacheStore {
         wallpaperSource: isWallpaperSource(parsed['wallpaperSource'])
           ? parsed['wallpaperSource']
           : DEFAULT_SETTINGS.wallpaperSource,
+        lockWallpaper:
+          typeof parsed['lockWallpaper'] === 'boolean'
+            ? parsed['lockWallpaper']
+            : DEFAULT_SETTINGS.lockWallpaper,
+        wallpaperDim:
+          typeof parsed['wallpaperDim'] === 'number' &&
+          Number.isFinite(parsed['wallpaperDim'])
+            ? Math.max(0, Math.min(80, parsed['wallpaperDim']))
+            : DEFAULT_SETTINGS.wallpaperDim,
+        wallpaperBlur:
+          typeof parsed['wallpaperBlur'] === 'number' &&
+          Number.isFinite(parsed['wallpaperBlur'])
+            ? Math.max(0, Math.min(20, parsed['wallpaperBlur']))
+            : DEFAULT_SETTINGS.wallpaperBlur,
+        weatherViewMode: isWeatherViewMode(parsed['weatherViewMode'])
+          ? parsed['weatherViewMode']
+          : DEFAULT_SETTINGS.weatherViewMode,
+        showScratchpad:
+          typeof parsed['showScratchpad'] === 'boolean'
+            ? parsed['showScratchpad']
+            : DEFAULT_SETTINGS.showScratchpad,
+        scratchpadContent:
+          typeof parsed['scratchpadContent'] === 'string'
+            ? parsed['scratchpadContent']
+            : DEFAULT_SETTINGS.scratchpadContent,
+        linkTarget: isLinkTargetMode(parsed['linkTarget'])
+          ? parsed['linkTarget']
+          : DEFAULT_SETTINGS.linkTarget,
       };
     } catch {
       return DEFAULT_SETTINGS;
@@ -146,7 +199,6 @@ export class LocalStorageAdapter implements ISettingsStore, IWeatherCacheStore {
       this.storage.setItem(STORAGE_KEYS.THEME, settings.theme);
       this.storage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
     } catch {
-      // Storage quota errors should never crash the New Tab UI
     }
   }
 
@@ -175,7 +227,6 @@ export class LocalStorageAdapter implements ISettingsStore, IWeatherCacheStore {
     try {
       this.storage.setItem(STORAGE_KEYS.WEATHER_CACHE, JSON.stringify(data));
     } catch {
-      // Ignore quota errors
     }
   }
 
@@ -183,7 +234,6 @@ export class LocalStorageAdapter implements ISettingsStore, IWeatherCacheStore {
     try {
       this.storage.removeItem(STORAGE_KEYS.WEATHER_CACHE);
     } catch {
-      // Ignore
     }
   }
 }

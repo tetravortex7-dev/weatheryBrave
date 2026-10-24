@@ -7,7 +7,6 @@ export class ThemeManager {
     try {
       window.localStorage.setItem(STORAGE_KEYS.THEME, themeId);
     } catch {
-      // Ignore storage failures
     }
   }
 

@@ -4,7 +4,7 @@ import { type IClock } from '../ports/IClock';
 import { type IWeatherCacheStore } from '../ports/IStorageAdapter';
 import { type IWeatherProvider } from '../ports/IWeatherProvider';
 
-export const WEATHER_CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes
+export const WEATHER_CACHE_TTL_MS = 30 * 60 * 1000;
 
 export interface WeatherSyncCallbacks {
   onWeatherState(data: WeatherData, isStale: boolean): void;
@@ -35,12 +35,6 @@ export class WeatherSyncService {
     return ageMs >= 0 && ageMs < this.ttlMs;
   }
 
-  /**
-   * Stale-While-Revalidate entrypoint:
-   * 1. Synchronously emits cached weather if coordinates match.
-   * 2. Skips network call if cache is younger than 30 minutes and forceRefresh is false.
-   * 3. Fetches fresh data in background when stale or missing.
-   */
   public async sync(
     location: LocationConfig,
     callbacks: WeatherSyncCallbacks,
