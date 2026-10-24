@@ -407,6 +407,15 @@ body.has-wallpaper .top-bar .icon-btn {
   letter-spacing: 0.02em;
 }
 
+.quick-pin__favicon {
+  display: block;
+  width: 1.15rem;
+  height: 1.15rem;
+  object-fit: contain;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
 .quick-pin__remove {
   display: none;
   align-items: center;

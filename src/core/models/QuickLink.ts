@@ -18,6 +18,9 @@ export function normalizeQuickLinkUrl(raw: string): string | null {
   if (!trimmed) {
     return null;
   }
+  if (/^[a-z0-9+.-]+:\/\//i.test(trimmed) && !/^https?:\/\//i.test(trimmed)) {
+    return null;
+  }
   const withProtocol = /^https?:\/\//i.test(trimmed)
     ? trimmed
     : `https://${trimmed}`;
@@ -43,5 +46,24 @@ export function extractMonogram(title: string, url: string): string {
     return host.slice(0, 2).toUpperCase() || 'WB';
   } catch {
     return 'WB';
+  }
+}
+
+export function getFaviconUrl(pageUrl: string, size: number = 32): string | null {
+  try {
+    const chromeApi = (
+      globalThis as {
+        chrome?: { runtime?: { getURL?: (path: string) => string } };
+      }
+    )?.chrome?.runtime;
+    if (typeof chromeApi?.getURL === 'function') {
+      const u = new URL(chromeApi.getURL('/_favicon/'));
+      u.searchParams.set('pageUrl', pageUrl);
+      u.searchParams.set('size', size.toString());
+      return u.toString();
+    }
+    return null;
+  } catch {
+    return null;
   }
 }

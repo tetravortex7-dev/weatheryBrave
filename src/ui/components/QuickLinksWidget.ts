@@ -1,5 +1,6 @@
 import {
   extractMonogram,
+  getFaviconUrl,
   MAX_QUICK_LINKS,
   normalizeQuickLinkUrl,
   type QuickLink,
@@ -161,6 +162,33 @@ export class QuickLinksWidget {
         textContent: extractMonogram(item.title, item.url),
       });
 
+      const faviconUrl = getFaviconUrl(item.url);
+      let iconEl: HTMLElement = badge;
+
+      if (faviconUrl) {
+        const img = createEl('img', {
+          className: 'quick-pin__favicon',
+          attrs: {
+            src: faviconUrl,
+            alt: '',
+            loading: 'lazy',
+            decoding: 'async',
+          },
+        }) as HTMLImageElement;
+
+        img.addEventListener('error', () => {
+          img.replaceWith(badge);
+        });
+
+        img.addEventListener('load', () => {
+          if (img.naturalWidth === 0) {
+            img.replaceWith(badge);
+          }
+        });
+
+        iconEl = img;
+      }
+
       const label = createEl('span', {
         className: 'quick-pin__label',
         textContent: item.title,
@@ -181,7 +209,7 @@ export class QuickLinksWidget {
           className: 'quick-pin__link',
           attrs: anchorAttrs,
         },
-        [badge, label]
+        [iconEl, label]
       );
 
       const removeBtn = createEl(
