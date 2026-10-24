@@ -1,54 +1,112 @@
 <div align="center">
   <img src="public/icons/icon-128.png" alt="WeatheryBrave" width="88" height="88" />
   <h1>WeatheryBrave</h1>
-  <p><strong>A fast, privacy-first New Tab extension for Chromium browsers.</strong></p>
+  <p><strong>A fast, privacy-first, zero-telemetry New Tab extension for Chromium browsers.</strong></p>
+
+  <p>
+    <img src="https://img.shields.io/badge/Dependencies-0_Runtime-success?style=flat-square" alt="Zero Dependencies" />
+    <img src="https://img.shields.io/badge/Manifest-V3-blue?style=flat-square" alt="Manifest V3" />
+    <img src="https://img.shields.io/badge/TypeScript-Strict-blue?style=flat-square" alt="TypeScript Strict" />
+    <img src="https://img.shields.io/badge/Weather-Open--Meteo-orange?style=flat-square" alt="Open-Meteo" />
+    <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License MIT" />
+  </p>
 </div>
 
 ---
 
 ## Overview
 
-**WeatheryBrave** is a clean, modern, and lightning-fast New Tab replacement designed for **Brave**, **Google Chrome**, and all Chromium-based browsers.
+**WeatheryBrave** is a clean, modern, and lightning-fast New Tab replacement designed for **Brave**, **Google Chrome**, and Chromium-based browsers.
 
-It brings together an accurate live weather forecast, curated high-resolution photography, customizable quick pins, and a distraction-free Zen mode — all loaded instantly with **zero telemetry** and **zero runtime dependencies**.
-
----
-
-## Highlights
-
-- ⚡ **Instant Load (< 16ms)**: Synchronous Zero-FOUC startup with no blank white screen.
-- 🌤️ **Live Weather**: Accurate Open-Meteo forecast (5-day + interactive hourly view, UV index, sunrise/sunset) with no API keys required.
-- 🖼️ **Stunning Wallpapers**: 40 curated offline Brave photographs or your own custom uploaded images with real-time Dim and Blur controls.
-- 🧘 **Zen Mode**: Press `Z` (or double-click anywhere) to hide all widgets and enjoy clean photography.
-- 📌 **Quick Pins**: Fast bookmarks with intuitive drag-and-drop reordering and `Alt + 1..8` hotkeys.
-- 🌍 **12 Languages**: Full localization with automatic browser UI detection and localized tab titles (*«Новая вкладка»*, *«New Tab»*, *«Nueva pestaña»*, etc.).
-- 🔒 **100% Private**: No tracking, no external analytics, no permissions bloat, and `0` runtime npm dependencies.
+It brings together an accurate live weather forecast, curated high-resolution photography, customizable quick pins, an instant search bar with bang shortcuts, a scratchpad, and a distraction-free Zen mode — all loaded instantly with **zero telemetry** and **zero runtime dependencies**.
 
 ---
 
-## Quick Start
+## ✨ Features
+
+- ⚡ **Instant Load (< 16ms)**: Synchronous Zero-FOUC startup script (`theme-boot.js`) prevents white flashbangs and pre-applies themes and localized tab titles before DOM parsing.
+- 🌡️ **Toolbar Temperature Badge**: Shows live temperature directly on the browser extension icon (`chrome.action.setBadgeText`), color-coded for warm and freezing conditions, with °C/°F support.
+- 🎨 **Adaptive Wallpaper Accent**: Analyzes the active wallpaper using offscreen downsampling ($32\times32$) and dynamically extracts a vibrant dominant color for UI buttons, toggles, and glow effects.
+- 🔍 **Smart Search Bar**:
+  - Focus anytime by clicking or pressing `/`.
+  - Can be toggled on/off in settings for minimalists.
+  - Supports `Enter` (current tab) and `Ctrl + Enter` (new tab).
+- ⚡ **DuckDuckGo-Style Bangs**:
+  - **Direct navigation**: Type `!yt` (YouTube), `!gh` (GitHub), `!r` (Reddit), `!gpt` (ChatGPT), `!x` (X), `!w` (Wikipedia), `!k` (Kaspi), `!d` (DuckDuckGo), `!b` (Brave Search), `!g` (Google) and press Enter to jump straight to the website.
+  - **Direct search**: Type `!yt lofi beats`, `!gh weatherybrave`, or `!r webdev` to jump straight to search results.
+- 🌤️ **Live Weather Forecast**: Accurate weather via Open-Meteo (current conditions, 5-day forecast, interactive 24-hour hourly view, UV index, sunrise/sunset, and Stale-While-Revalidate caching). No API key required.
+- 🖼️ **40 Offline Wallpapers & Custom Uploads**:
+  - 40 curated official Brave wallpapers packaged directly inside the extension bundle (works 100% offline).
+  - Custom wallpaper upload with drag-and-drop, stored locally in IndexedDB.
+  - Real-time Dim (0–80%) and Blur (0–20px) backdrop controls.
+  - Wallpaper locking and one-click cycling (`🔄`).
+- 📌 **Curated Quick Pins**:
+  - Pre-configured with top global destinations (YouTube, Facebook, Instagram, ChatGPT).
+  - Non-invasive Chrome favicon caching with 2-letter monogram fallbacks.
+  - Drag-and-drop reordering, custom pin additions, and `Alt + 1..8` hotkeys.
+- 📝 **Quick Notes (Scratchpad)**: Built-in markdown-friendly scratchpad with local auto-save for jotting down thoughts or tasks.
+- 🧘 **Zen Mode**: Press `Z` (or double-click anywhere on empty space) to hide all widgets and enjoy clean photography.
+- 🌍 **12 Languages**: Full localization (`en`, `ru`, `de`, `fr`, `es`, `zh`, `ja`, `ko`, `pt`, `ar`, `hi`, `tr`) with automatic browser UI detection and localized tab titles (*«Новая вкладка»*, *«New Tab»*, *«Nueva pestaña»*, etc.).
+- 🔒 **100% Private & Autonomous**: `0` npm runtime dependencies (`dependencies: {}`), zero analytics, no background battery drain, and no permission bloat.
+
+---
+
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
+| :--- | :--- |
+| `Ctrl + T` | Open new tab |
+| `/` | Focus and select search bar from anywhere |
+| `Z` | Toggle Zen Mode (hide/show all widgets) |
+| `Esc` | Clear search / close modal / close settings / exit Zen Mode |
+| `Alt + 1..8` | Open quick pin #1 to #8 |
+| `Enter` | Search or open URL in current tab |
+| `Ctrl + Enter` | Search or open URL in a new tab |
+
+---
+
+## 🚀 Quick Start
+
+### 1. Build the Extension
 
 ```bash
-# 1. Install dev dependencies
+# Install development dependencies
 npm install
 
-# 2. Build production bundle
+# Run unit tests
+npm test
+
+# Build production bundle
 npm run build
 ```
 
-Then load the extension into your browser:
-1. Navigate to `brave://extensions` (or `chrome://extensions`).
-2. Enable **Developer mode** in the top-right corner.
-3. Click **Load unpacked** and select the [`dist`](./dist) folder.
+### 2. Install into Browser
+
+1. Open your browser and navigate to `brave://extensions` (or `chrome://extensions`).
+2. Enable **Developer mode** toggle in the top-right corner.
+3. Click **Load unpacked** and select the [`dist`](./dist) folder generated by the build.
+4. Open a new tab (`Ctrl + T`) and enjoy WeatheryBrave!
 
 ---
 
-## Documentation
+## 🛠️ Verification & Quality Gates
 
-For full architecture details, SOLID design principles, and technical specifications, see **[project.md](./project.md)**.
+The codebase strictly adheres to clean code standards and automated checks:
+
+```bash
+npm run typecheck   # Strict TypeScript checks (0 errors)
+npm test            # Vitest unit test suite (43/43 passing)
+npm run build       # Production bundle build (< 100 KB gzipped)
+```
 
 ---
 
-## License
+## 📄 Documentation
+
+For full architecture details, SOLID principles, directory structure, and technical specifications, see **[project.md](./project.md)**.
+
+---
+
+## 📜 License
 
 [MIT](./LICENSE)

@@ -216,19 +216,6 @@ function bootstrap(): void {
 
   void refreshCustomWallpapers(false);
   runWeatherSync(false);
-
-  if (currentSettings.showSearch) {
-    requestAnimationFrame(() => {
-      searchWidget.focus();
-    });
-    window.addEventListener(
-      'focus',
-      () => {
-        searchWidget.focus();
-      },
-      { once: true }
-    );
-  }
 }
 
 bootstrap();

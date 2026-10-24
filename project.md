@@ -54,19 +54,30 @@ Most "New Tab" weather extensions in browser stores suffer from:
 - **Lock / Rotate**: Lock your favorite background permanently or rotate on each new tab.
 - **6 Solid Themes**: Brave Dark, Midnight OLED, Nordic Frost, Solar Warm, Clean Light, and Auto-System.
 
+### 🌡️ Temperature Toolbar Badge
+- **Live Extension Icon Badge**: Displays current temperature directly on the toolbar icon using `chrome.action.setBadgeText`.
+- **Dynamic Heat Tinting**: Color-coded badge background (`#3498db` for freezing $\le 0^\circ\text{C}$, `#ff793f` for warm weather).
+- **Metric & Imperial**: Respects chosen temperature unit (°C / °F) with full toggle support in settings.
+
+### 🎨 Adaptive Wallpaper Accent
+- **Offscreen Dominant Color Extraction**: Samples active wallpaper on a 32x32 offscreen canvas in $< 1\text{ms}$ with zero external dependencies.
+- **Dynamic CSS Variables**: Intelligently tunes `--accent-primary` and `--accent-glow` to match the palette of the current photo.
+- **Safe Fallbacks**: Reverts smoothly to theme default when disabled or displaying solid background color themes.
+
+### 🔍 Smart Search Bar & Bangs
+- **Quick Focus**: Click anywhere on the bar or press `/` from anywhere on the page to focus instantly.
+- **DuckDuckGo-Style Bangs**:
+  - Direct site jump: `!yt` (YouTube), `!gh` (GitHub), `!r` (Reddit), `!gpt` (ChatGPT), `!x` (X), `!w` (Wikipedia), `!k` (Kaspi), `!d` (DuckDuckGo), `!b` (Brave Search), `!g` (Google).
+  - Direct query search: `!yt lofi beats`, `!gh weatherybrave`, `!r webdev`.
+- **Privacy Search & Direct Navigation**: Uses `chrome.search.query` without intermediate trackers; automatically detects direct domains (`github.com`, `brave.com`).
+- **Flexible Display**: Can be toggled on/off in settings for users desiring an ultra-minimal dashboard.
+
 ### 📌 Quick Pins with Intuitive Drag & Drop
-- Up to 8 minimalist bookmarks with auto-generated 2-letter monograms (no external favicon CDNs).
+- **Top 4 Curated Defaults**: Pre-configured with the world's most visited destinations (YouTube, Facebook, Instagram, ChatGPT).
+- **Non-Invasive Favicons**: Uses Chrome's native cached favicon API (`chrome-extension://.../_favicon/`) with high-contrast 2-letter monograms as reliable offline fallbacks.
 - **Intuitive Reordering**: Drag and drop pins with dynamic visual insertion bars indicating target placement.
 - **Configurable Navigation**: Open links in current tab or new tab.
 - **Hotkeys**: Jump directly to pins using `Alt + 1` … `Alt + 8`.
-
-### 📝 Quick Notes (Scratchpad)
-- Distraction-free scratchpad for quick notes and to-dos.
-- Automatically persisted in `localStorage`. Toggle on or off in settings.
-
-### 🔍 Default Browser Search
-- Respects your browser's default search engine using the privacy-safe Chrome search API (`chrome.search.query`).
-- Automatically detects direct domain URLs (`github.com`, `brave.com`) and navigates directly without querying search engines.
 
 ---
 
